@@ -448,7 +448,7 @@ export default function ContactForm() {
 
                   {/* TCPA Compliance Checkboxes */}
                   {/* Checkbox 1: SMS Consent (Required) */}
-                  <div className="flex items-start space-x-3 p-4 bg-orange/10 rounded-lg border-2 border-orange/30">
+                  <div className="flex items-start space-x-3 bg-navy/5 p-5 rounded-lg border-2 border-navy/20">
                     <input
                       type="checkbox"
                       id="res-agreeSMS"
@@ -610,7 +610,7 @@ export default function ContactForm() {
 
                   {/* TCPA Compliance Checkboxes */}
                   {/* Checkbox 1: SMS Consent (Required) */}
-                  <div className="flex items-start space-x-3 p-4 bg-orange/10 rounded-lg border-2 border-orange/30">
+                  <div className="flex items-start space-x-3 bg-navy/5 p-5 rounded-lg border-2 border-navy/20">
                     <input
                       type="checkbox"
                       id="inq-agreeSMS"
