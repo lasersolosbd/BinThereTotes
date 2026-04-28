@@ -60,28 +60,16 @@ export default function Hero() {
 
           {/* Right Image */}
           <div className="relative">
-            <div className="relative h-[500px] rounded-2xl overflow-hidden shadow-2xl transform hover:scale-105 transition-transform duration-300">
+            {/* Hover scale effect removed from this div */}
+            <div className="relative h-[500px] rounded-2xl overflow-hidden shadow-2xl">
               <Image
-                src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=800&h=1000&fit=crop"
+                src="/hero-moving.jpg"
                 alt="Moving day with stacked boxes"
                 fill
                 className="object-cover"
                 priority
               />
               <div className="absolute inset-0 bg-gradient-to-t from-navy/50 to-transparent"></div>
-              
-              {/* Floating Badge */}
-              <div className="absolute bottom-6 left-6 bg-white p-4 rounded-lg shadow-xl">
-                <div className="flex items-center space-x-3">
-                  <div className="bg-orange/10 p-3 rounded-full">
-                    <Package className="h-6 w-6 text-orange" />
-                  </div>
-                  <div>
-                    <div className="text-2xl font-bold text-navy">500+</div>
-                    <div className="text-sm text-gray-600">Successful Moves</div>
-                  </div>
-                </div>
-              </div>
             </div>
           </div>
         </div>
