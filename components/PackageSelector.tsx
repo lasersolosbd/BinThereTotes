@@ -241,9 +241,6 @@ export default function PackageSelector() {
               <div className="bg-orange rounded-xl p-6 text-center">
                 <div className="text-cool-100 text-sm mb-1">Total Price</div>
                 <div className="text-5xl font-bold">${calculateCustomPrice(customBins)}</div>
-                <div className="text-cool-100 mt-2">
-                  ${(calculateCustomPrice(customBins) / customBins).toFixed(2)} per bin
-                </div>
               </div>
             </div>
           </div>
