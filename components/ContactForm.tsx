@@ -459,7 +459,7 @@ export default function ContactForm() {
                       className="mt-1 h-5 w-5 text-orange focus:ring-orange border-orange/50 rounded"
                     />
                     <label htmlFor="res-agreeSMS" className="text-sm text-gray-900">
-                      <span className="text-red-600 font-bold">* REQUIRED:</span> By providing your phone number, you consent to receive marketing text messages from Bin There Totes. Consent is not a condition of purchase. Message & data rates may apply. Reply STOP to opt out.
+                      By providing your phone number, you consent to receive marketing text messages from Bin There Totes. Consent is not a condition of purchase. Message & data rates may apply. Reply STOP to opt out.
                     </label>
                   </div>
 
