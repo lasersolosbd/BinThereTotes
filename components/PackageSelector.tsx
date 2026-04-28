@@ -1,12 +1,12 @@
 'use client'
 
 import { useState } from 'react'
-import { Package, Plus, Minus, Check } from 'lucide-react'
+import { Package, Plus, Minus, Check, Home } from 'lucide-react'
 
 const STANDARD_PACKAGES = [
   {
     id: '1bed',
-    name: '1-Bedroom',
+    name: '1-Bedroom Home',
     bins: 15,
     price: 149,
     description: 'Perfect for studios and 1-bedroom apartments',
@@ -14,7 +14,7 @@ const STANDARD_PACKAGES = [
   },
   {
     id: '2bed',
-    name: '2-Bedroom',
+    name: '2-Bedroom Home',
     bins: 25,
     price: 229,
     description: 'Ideal for 2-bedroom homes and apartments',
@@ -22,7 +22,7 @@ const STANDARD_PACKAGES = [
   },
   {
     id: '3bed',
-    name: '3-Bedroom',
+    name: '3-Bedroom Home',
     bins: 40,
     price: 329,
     description: 'Great for larger homes and families',
@@ -38,6 +38,16 @@ export default function PackageSelector() {
   const calculateCustomPrice = (bins: number) => {
     // $8 per bin base price
     return Math.round(bins * 8)
+  }
+
+  // Dynamic extrapolation logic updated to clarify entire living space
+  const getEstimatedHouseSize = (bins: number) => {
+    if (bins <= 20) return 'Studio / 1-Bed Home'
+    if (bins <= 35) return '1-2 Bedroom Home'
+    if (bins <= 50) return '2-3 Bedroom Home'
+    if (bins <= 70) return '3-4 Bedroom Home'
+    if (bins <= 90) return '4-5 Bedroom Home'
+    return 'Entire 5+ Bedroom Home'
   }
 
   const handleCustomIncrease = () => {
@@ -178,6 +188,12 @@ export default function PackageSelector() {
                 <p className="text-cool-100">
                   Adjust the bin count to perfectly match your moving needs
                 </p>
+              </div>
+
+              {/* Dynamic House Size Extrapolation Display */}
+              <div className="flex items-center justify-center space-x-2 text-orange-light mb-6 bg-white/10 py-3 rounded-xl backdrop-blur-sm">
+                <Home className="h-6 w-6" />
+                <span className="text-xl font-semibold">Estimated Size: {getEstimatedHouseSize(customBins)}</span>
               </div>
 
               {/* Bin Counter */}
