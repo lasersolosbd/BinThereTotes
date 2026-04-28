@@ -6,7 +6,7 @@ import { Package, Plus, Minus, Check, Home } from 'lucide-react'
 const STANDARD_PACKAGES = [
   {
     id: '1bed',
-    name: '1-Bedroom Home',
+    name: '1-Bedroom House',
     bins: 15,
     price: 149,
     description: 'Perfect for studios and 1-bedroom apartments',
@@ -14,18 +14,26 @@ const STANDARD_PACKAGES = [
   },
   {
     id: '2bed',
-    name: '2-Bedroom Home',
+    name: '2-Bedroom House',
     bins: 35,
     price: 229,
-    description: 'Ideal for 2-bedroom homes and apartments',
+    description: 'Ideal for 2-bedroom houses and apartments',
     popular: true,
   },
   {
     id: '3bed',
-    name: '3-Bedroom Home',
+    name: '3-Bedroom House',
     bins: 50,
     price: 329,
-    description: 'Great for larger homes and families',
+    description: 'Great for medium houses and families',
+    popular: false,
+  },
+  {
+    id: '4bed',
+    name: '4-5 Bedroom House',
+    bins: 75,
+    price: 429,
+    description: 'Designed for large houses and estates',
     popular: false,
   },
 ]
@@ -33,19 +41,23 @@ const STANDARD_PACKAGES = [
 export default function PackageSelector() {
   const [selectedPackage, setSelectedPackage] = useState('2bed')
   const [customMode, setCustomMode] = useState(false)
-  const [customBins, setCustomBins] = useState(35) // Default starting point
+  const [customBins, setCustomBins] = useState(35)
 
+  // Tiered pricing logic to perfectly match standard packages
   const calculateCustomPrice = (bins: number) => {
-    // $8 per bin base price
-    return Math.round(bins * 8)
+    if (bins <= 15) return 149
+    if (bins <= 35) return 149 + (bins - 15) * 4       // $4/bin between 15 and 35
+    if (bins <= 50) return 229 + Math.round((bins - 35) * 6.67) // ~$6.67/bin between 35 and 50
+    if (bins <= 75) return 329 + (bins - 50) * 4       // $4/bin between 50 and 75
+    return 429 + (bins - 75) * 5                       // $5/bin for anything over 75
   }
 
-  // Dynamic extrapolation logic updated to clarify entire living space
+  // Dynamic extrapolation logic updated to use "House"
   const getEstimatedHouseSize = (bins: number) => {
-    if (bins <= 20) return 'Studio / 1-Bed Home'
-    if (bins <= 35) return '2-Bedroom Home'
-    if (bins <= 50) return '3-Bedroom Home'
-    if (bins <= 75) return '4-5 Bedroom Home'
+    if (bins <= 20) return 'Studio / 1-Bed House'
+    if (bins <= 35) return '2-Bedroom House'
+    if (bins <= 50) return '3-Bedroom House'
+    if (bins <= 75) return '4-5 Bedroom House'
     return 'Larger House / Estate'
   }
 
@@ -54,7 +66,6 @@ export default function PackageSelector() {
   }
 
   const handleCustomDecrease = () => {
-    // Raised the floor to 15 bins to match the minimum standard package
     setCustomBins(prev => Math.max(prev - 5, 15))
   }
 
@@ -99,12 +110,12 @@ export default function PackageSelector() {
 
         {/* Standard Packages View */}
         {!customMode && (
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             {STANDARD_PACKAGES.map((pkg) => (
               <div
                 key={pkg.id}
                 onClick={() => setSelectedPackage(pkg.id)}
-                className={`relative cursor-pointer rounded-2xl p-8 transition-all duration-300 transform hover:scale-105 ${
+                className={`relative cursor-pointer rounded-2xl p-8 transition-all duration-300 transform hover:scale-105 flex flex-col ${
                   selectedPackage === pkg.id
                     ? 'bg-navy text-white shadow-2xl ring-4 ring-orange'
                     : 'bg-cool-50 hover:shadow-xl'
@@ -127,7 +138,7 @@ export default function PackageSelector() {
                 )}
 
                 {/* Package Icon */}
-                <div className={`inline-flex p-4 rounded-xl mb-4 ${
+                <div className={`inline-flex p-4 rounded-xl mb-4 self-start ${
                   selectedPackage === pkg.id ? 'bg-orange/20' : 'bg-orange/10'
                 }`}>
                   <Package className={`h-8 w-8 ${
