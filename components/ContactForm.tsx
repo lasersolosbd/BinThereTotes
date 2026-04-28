@@ -402,10 +402,10 @@ export default function ContactForm() {
                       required
                       className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange focus:border-transparent outline-none transition-all"
                     >
-                      <option value="studio">Studio / 1-Bed Home (15 Bins)</option>
-                      <option value="2bed">2-Bedroom Home (35 Bins)</option>
-                      <option value="3bed">3-Bedroom Home (50 Bins)</option>
-                      <option value="4-5bed">4-5 Bedroom Home (75 Bins)</option>
+                      <option value="studio">Studio / 1-Bed House (15 Bins)</option>
+                      <option value="2bed">2-Bedroom House (35 Bins)</option>
+                      <option value="3bed">3-Bedroom House (50 Bins)</option>
+                      <option value="4-5bed">4-5 Bedroom House (75 Bins)</option>
                       <option value="larger">Larger House - Let's Discuss</option>
                       <option value="custom">Custom Setup - Let's Discuss</option>
                     </select>
