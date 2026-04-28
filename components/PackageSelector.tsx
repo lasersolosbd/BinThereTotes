@@ -18,7 +18,7 @@ const STANDARD_PACKAGES = [
     bins: 35,
     price: 229,
     description: 'Ideal for 2-bedroom houses and apartments',
-    popular: true,
+    popular: false,
   },
   {
     id: '3bed',
@@ -26,7 +26,7 @@ const STANDARD_PACKAGES = [
     bins: 50,
     price: 329,
     description: 'Great for medium houses and families',
-    popular: false,
+    popular: true,
   },
   {
     id: '4bed',
@@ -39,17 +39,17 @@ const STANDARD_PACKAGES = [
 ]
 
 export default function PackageSelector() {
-  const [selectedPackage, setSelectedPackage] = useState('2bed')
+  const [selectedPackage, setSelectedPackage] = useState('3bed')
   const [customMode, setCustomMode] = useState(false)
-  const [customBins, setCustomBins] = useState(35)
+  const [customBins, setCustomBins] = useState(50)
 
   // Tiered pricing logic to perfectly match standard packages
   const calculateCustomPrice = (bins: number) => {
     if (bins <= 15) return 149
-    if (bins <= 35) return 149 + (bins - 15) * 4       // $4/bin between 15 and 35
-    if (bins <= 50) return 229 + Math.round((bins - 35) * 6.67) // ~$6.67/bin between 35 and 50
-    if (bins <= 75) return 329 + (bins - 50) * 4       // $4/bin between 50 and 75
-    return 429 + (bins - 75) * 5                       // $5/bin for anything over 75
+    if (bins <= 35) return 149 + (bins - 15) * 4       
+    if (bins <= 50) return 229 + Math.round((bins - 35) * 6.67) 
+    if (bins <= 75) return 329 + (bins - 50) * 4       
+    return 429 + (bins - 75) * 5                       
   }
 
   // Dynamic extrapolation logic updated to use "House"
