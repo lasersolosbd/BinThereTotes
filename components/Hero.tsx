@@ -1,6 +1,6 @@
 'use client'
 
-import { Shield, ArrowRight, CheckCircle } from 'lucide-react'
+import { Shield, ArrowRight, CheckCircle, Package } from 'lucide-react'
 import Image from 'next/image'
 
 export default function Hero() {
@@ -21,7 +21,7 @@ export default function Hero() {
 
             {/* Main Headline */}
             <h1 className="text-5xl sm:text-6xl lg:text-7xl font-display font-bold text-navy leading-tight">
-              The <span className="text-orange">"Bin There,<br />Done That"</span><br />Guarantee
+              The <span className="text-orange">"Bin There,<br />Done That"</span><br />Way to Move
             </h1>
 
             {/* Subheadline */}
@@ -93,6 +93,3 @@ export default function Hero() {
     </section>
   )
 }
-
-// Missing import for Package icon
-import { Package } from 'lucide-react'
