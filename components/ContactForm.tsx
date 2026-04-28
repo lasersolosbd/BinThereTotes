@@ -13,8 +13,8 @@ interface ReservationFormData {
   package: string
   dropOffDate: string
   pickUpDate: string
-  agreeTerms: boolean
   agreeSMS: boolean
+  agreeVoice: boolean
 }
 
 interface InquiryFormData {
@@ -23,8 +23,8 @@ interface InquiryFormData {
   phone: string
   zipCode: string
   questions: string
-  agreeTerms: boolean
   agreeSMS: boolean
+  agreeVoice: boolean
 }
 
 export default function ContactForm() {
@@ -39,8 +39,8 @@ export default function ContactForm() {
     package: '2bed',
     dropOffDate: '',
     pickUpDate: '',
-    agreeTerms: false,
     agreeSMS: false,
+    agreeVoice: false,
   })
 
   // Inquiry form state
@@ -50,8 +50,8 @@ export default function ContactForm() {
     phone: '',
     zipCode: '',
     questions: '',
-    agreeTerms: false,
     agreeSMS: false,
+    agreeVoice: false,
   })
 
   const [isSubmitting, setIsSubmitting] = useState(false)
@@ -85,8 +85,8 @@ export default function ContactForm() {
   const handleReservationSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     
-    if (!reservationData.agreeTerms) {
-      alert('Please agree to the Terms and Privacy Policy to continue.')
+    if (!reservationData.agreeSMS) {
+      alert('You must consent to receive text messages to continue.')
       return
     }
 
@@ -105,8 +105,8 @@ export default function ContactForm() {
         package: reservationData.package,
         drop_off_date: reservationData.dropOffDate,
         pick_up_date: reservationData.pickUpDate,
-        agreed_to_terms: reservationData.agreeTerms,
         agreed_to_sms: reservationData.agreeSMS,
+        agreed_to_voice: reservationData.agreeVoice,
         submitted_at: new Date().toISOString(),
       }
 
@@ -128,8 +128,8 @@ export default function ContactForm() {
           package: '2bed',
           dropOffDate: '',
           pickUpDate: '',
-          agreeTerms: false,
           agreeSMS: false,
+          agreeVoice: false,
         })
       } else {
         setSubmitStatus('error')
@@ -146,8 +146,8 @@ export default function ContactForm() {
   const handleInquirySubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     
-    if (!inquiryData.agreeTerms) {
-      alert('Please agree to the Terms and Privacy Policy to continue.')
+    if (!inquiryData.agreeSMS) {
+      alert('You must consent to receive text messages to continue.')
       return
     }
 
@@ -164,8 +164,8 @@ export default function ContactForm() {
         phone: inquiryData.phone,
         zip_code: inquiryData.zipCode,
         questions: inquiryData.questions,
-        agreed_to_terms: inquiryData.agreeTerms,
         agreed_to_sms: inquiryData.agreeSMS,
+        agreed_to_voice: inquiryData.agreeVoice,
         submitted_at: new Date().toISOString(),
       }
 
@@ -185,8 +185,8 @@ export default function ContactForm() {
           phone: '',
           zipCode: '',
           questions: '',
-          agreeTerms: false,
           agreeSMS: false,
+          agreeVoice: false,
         })
       } else {
         setSubmitStatus('error')
@@ -291,7 +291,7 @@ export default function ContactForm() {
                   <Calendar className="h-5 w-5" />
                   <span>Reserve My Dates</span>
                 </div>
-                <div className="text-xs mt-1 opacity-80">Ready Now</div>
+                <div className="text-xs mt-1 opacity-80">High Intent</div>
               </button>
               <button
                 onClick={() => setActivePath('inquiry')}
@@ -402,10 +402,12 @@ export default function ContactForm() {
                       required
                       className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange focus:border-transparent outline-none transition-all"
                     >
-                      <option value="1bed">1-Bedroom (15 bins) - $149</option>
-                      <option value="2bed">2-Bedroom (25 bins) - $229</option>
-                      <option value="3bed">3-Bedroom (40 bins) - $329</option>
-                      <option value="custom">Custom Package - Let's Discuss</option>
+                      <option value="studio">Studio / 1-Bed Home (15 Bins)</option>
+                      <option value="2bed">2-Bedroom Home (35 Bins)</option>
+                      <option value="3bed">3-Bedroom Home (50 Bins)</option>
+                      <option value="4-5bed">4-5 Bedroom Home (75 Bins)</option>
+                      <option value="larger">Larger House - Let's Discuss</option>
+                      <option value="custom">Custom Setup - Let's Discuss</option>
                     </select>
                   </div>
 
@@ -444,48 +446,36 @@ export default function ContactForm() {
                     <p className="text-xs text-gray-500 mt-1">Standard rental is 2 weeks, extensions available</p>
                   </div>
 
-                  {/* A2P Compliance Checkboxes */}
-                  {/* Checkbox 1: Terms & Privacy (Required) */}
-                  <div className="flex items-start space-x-3 p-4 bg-cool-50 rounded-lg border-2 border-navy/20">
-                    <input
-                      type="checkbox"
-                      id="res-agreeTerms"
-                      name="agreeTerms"
-                      checked={reservationData.agreeTerms}
-                      onChange={handleReservationChange}
-                      required
-                      className="mt-1 h-5 w-5 text-orange focus:ring-orange border-gray-300 rounded"
-                    />
-                    <label htmlFor="res-agreeTerms" className="text-sm text-gray-900 font-medium">
-                      <span className="text-red-600 font-bold">* REQUIRED:</span> I agree to the{' '}
-                      <a href="/terms" target="_blank" rel="noopener noreferrer" className="text-orange hover:underline font-semibold">
-                        Terms of Service
-                      </a>{' '}
-                      and{' '}
-                      <a href="/privacy" target="_blank" rel="noopener noreferrer" className="text-orange hover:underline font-semibold">
-                        Privacy Policy
-                      </a>
-                    </label>
-                  </div>
-
-                  {/* Checkbox 2: SMS Consent (Optional but prominent) */}
-                  <div className="flex items-start space-x-3 bg-orange/10 p-5 rounded-lg border-2 border-orange/30">
+                  {/* TCPA Compliance Checkboxes */}
+                  {/* Checkbox 1: SMS Consent (Required) */}
+                  <div className="flex items-start space-x-3 p-4 bg-orange/10 rounded-lg border-2 border-orange/30">
                     <input
                       type="checkbox"
                       id="res-agreeSMS"
                       name="agreeSMS"
                       checked={reservationData.agreeSMS}
                       onChange={handleReservationChange}
+                      required
                       className="mt-1 h-5 w-5 text-orange focus:ring-orange border-orange/50 rounded"
                     />
                     <label htmlFor="res-agreeSMS" className="text-sm text-gray-900">
-                      <span className="font-semibold text-navy block mb-1">SMS/Text Message Consent (Optional)</span>
-                      By providing your phone number, you agree to receive text messages from Bin There Totes 
-                      regarding your inquiry, delivery confirmations, and pickup scheduling. Message and data rates may apply. 
-                      Message frequency varies. Reply STOP to cancel at any time. Reply HELP for assistance.
-                      <span className="block mt-2 text-xs text-gray-700 italic">
-                        Your mobile information will not be shared with third parties for marketing purposes.
-                      </span>
+                      <span className="text-red-600 font-bold">* REQUIRED:</span> By providing your phone number, you consent to receive marketing text messages from Bin There Totes. Consent is not a condition of purchase. Message & data rates may apply. Reply STOP to opt out.
+                    </label>
+                  </div>
+
+                  {/* Checkbox 2: Voice/AI Consent (Optional but prominent) */}
+                  <div className="flex items-start space-x-3 bg-navy/5 p-5 rounded-lg border-2 border-navy/20">
+                    <input
+                      type="checkbox"
+                      id="res-agreeVoice"
+                      name="agreeVoice"
+                      checked={reservationData.agreeVoice}
+                      onChange={handleReservationChange}
+                      className="mt-1 h-5 w-5 text-navy focus:ring-navy border-gray-300 rounded"
+                    />
+                    <label htmlFor="res-agreeVoice" className="text-sm text-gray-900">
+                      <span className="font-semibold text-navy block mb-1">AI Voice & Automated Calls (Optional)</span>
+                      I consent to receive phone calls from Bin There Totes, which may include automated, pre-recorded, or AI voice assistant communications. I understand I can opt out of future calls by requesting to be placed on the do-not-call list.
                     </label>
                   </div>
 
@@ -618,48 +608,36 @@ export default function ContactForm() {
                     />
                   </div>
 
-                  {/* A2P Compliance Checkboxes */}
-                  {/* Checkbox 1: Terms & Privacy (Required) */}
-                  <div className="flex items-start space-x-3 p-4 bg-cool-50 rounded-lg border-2 border-navy/20">
-                    <input
-                      type="checkbox"
-                      id="inq-agreeTerms"
-                      name="agreeTerms"
-                      checked={inquiryData.agreeTerms}
-                      onChange={handleInquiryChange}
-                      required
-                      className="mt-1 h-5 w-5 text-orange focus:ring-orange border-gray-300 rounded"
-                    />
-                    <label htmlFor="inq-agreeTerms" className="text-sm text-gray-900 font-medium">
-                      <span className="text-red-600 font-bold">* REQUIRED:</span> I agree to the{' '}
-                      <a href="/terms" target="_blank" rel="noopener noreferrer" className="text-orange hover:underline font-semibold">
-                        Terms of Service
-                      </a>{' '}
-                      and{' '}
-                      <a href="/privacy" target="_blank" rel="noopener noreferrer" className="text-orange hover:underline font-semibold">
-                        Privacy Policy
-                      </a>
-                    </label>
-                  </div>
-
-                  {/* Checkbox 2: SMS Consent (Optional but prominent) */}
-                  <div className="flex items-start space-x-3 bg-orange/10 p-5 rounded-lg border-2 border-orange/30">
+                  {/* TCPA Compliance Checkboxes */}
+                  {/* Checkbox 1: SMS Consent (Required) */}
+                  <div className="flex items-start space-x-3 p-4 bg-orange/10 rounded-lg border-2 border-orange/30">
                     <input
                       type="checkbox"
                       id="inq-agreeSMS"
                       name="agreeSMS"
                       checked={inquiryData.agreeSMS}
                       onChange={handleInquiryChange}
+                      required
                       className="mt-1 h-5 w-5 text-orange focus:ring-orange border-orange/50 rounded"
                     />
                     <label htmlFor="inq-agreeSMS" className="text-sm text-gray-900">
-                      <span className="font-semibold text-navy block mb-1">SMS/Text Message Consent (Optional)</span>
-                      By providing your phone number, you agree to receive text messages from Bin There Totes 
-                      regarding your inquiry, delivery confirmations, and pickup scheduling. Message and data rates may apply. 
-                      Message frequency varies. Reply STOP to cancel at any time. Reply HELP for assistance.
-                      <span className="block mt-2 text-xs text-gray-700 italic">
-                        Your mobile information will not be shared with third parties for marketing purposes.
-                      </span>
+                      <span className="text-red-600 font-bold">* REQUIRED:</span> By providing your phone number, you consent to receive marketing text messages from Bin There Totes. Consent is not a condition of purchase. Message & data rates may apply. Reply STOP to opt out.
+                    </label>
+                  </div>
+
+                  {/* Checkbox 2: Voice/AI Consent (Optional but prominent) */}
+                  <div className="flex items-start space-x-3 bg-navy/5 p-5 rounded-lg border-2 border-navy/20">
+                    <input
+                      type="checkbox"
+                      id="inq-agreeVoice"
+                      name="agreeVoice"
+                      checked={inquiryData.agreeVoice}
+                      onChange={handleInquiryChange}
+                      className="mt-1 h-5 w-5 text-navy focus:ring-navy border-gray-300 rounded"
+                    />
+                    <label htmlFor="inq-agreeVoice" className="text-sm text-gray-900">
+                      <span className="font-semibold text-navy block mb-1">AI Voice & Automated Calls (Optional)</span>
+                      I consent to receive phone calls from Bin There Totes, which may include automated, pre-recorded, or AI voice assistant communications. I understand I can opt out of future calls by requesting to be placed on the do-not-call list.
                     </label>
                   </div>
 
