@@ -221,8 +221,8 @@ export default function ContactForm() {
                 </div>
                 <div>
                   <h3 className="font-semibold text-navy mb-1">Phone</h3>
-                  <a href="tel:+14195551234" className="text-gray-600 hover:text-orange transition-colors">
-                    (419) 555-1234
+                  <a href="tel:+15678251714" className="text-gray-600 hover:text-orange transition-colors">
+                    (567) 825-1714
                   </a>
                 </div>
               </div>
@@ -366,7 +366,7 @@ export default function ContactForm() {
                       onChange={handleReservationChange}
                       required
                       className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange focus:border-transparent outline-none transition-all"
-                      placeholder="(419) 555-1234"
+                      placeholder="(567) 825-1714"
                     />
                   </div>
 
@@ -506,7 +506,7 @@ export default function ContactForm() {
                   {submitStatus === 'error' && (
                     <div className="bg-red-50 border border-red-200 text-red-800 px-4 py-3 rounded-lg">
                       <p className="font-semibold">Oops!</p>
-                      <p className="text-sm">Something went wrong. Please try again or call us at (419) 555-1234.</p>
+                      <p className="text-sm">Something went wrong. Please try again or call us at (567) 825-1714.</p>
                     </div>
                   )}
                 </form>
@@ -568,7 +568,7 @@ export default function ContactForm() {
                       onChange={handleInquiryChange}
                       required
                       className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange focus:border-transparent outline-none transition-all"
-                      placeholder="(419) 555-1234"
+                      placeholder="(567) 825-1714"
                     />
                   </div>
 
@@ -668,7 +668,7 @@ export default function ContactForm() {
                   {submitStatus === 'error' && (
                     <div className="bg-red-50 border border-red-200 text-red-800 px-4 py-3 rounded-lg">
                       <p className="font-semibold">Oops!</p>
-                      <p className="text-sm">Something went wrong. Please try again or call us at (419) 555-1234.</p>
+                      <p className="text-sm">Something went wrong. Please try again or call us at (567) 825-1714.</p>
                     </div>
                   )}
                 </form>
