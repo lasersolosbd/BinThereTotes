@@ -1,0 +1,36 @@
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Inter:wght@400;500;600&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply font-body text-gray-900 antialiased;
+  }
+  
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-display font-bold;
+  }
+}
+
+@layer utilities {
+  .gradient-mesh {
+    background: 
+      radial-gradient(at 20% 30%, rgba(255, 107, 53, 0.15) 0px, transparent 50%),
+      radial-gradient(at 80% 70%, rgba(10, 31, 68, 0.1) 0px, transparent 50%),
+      radial-gradient(at 50% 50%, rgba(255, 107, 53, 0.08) 0px, transparent 50%);
+  }
+  
+  .text-gradient {
+    @apply bg-clip-text text-transparent bg-gradient-to-r from-navy to-navy-light;
+  }
+  
+  .btn-primary {
+    @apply bg-orange hover:bg-orange-dark text-white font-semibold px-8 py-4 rounded-lg transition-all duration-300 transform hover:scale-105 hover:shadow-xl shadow-lg;
+  }
+  
+  .btn-secondary {
+    @apply bg-white border-2 border-navy text-navy hover:bg-navy hover:text-white font-semibold px-8 py-4 rounded-lg transition-all duration-300;
+  }
+}
