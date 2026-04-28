@@ -15,7 +15,7 @@ const STANDARD_PACKAGES = [
   {
     id: '2bed',
     name: '2-Bedroom Home',
-    bins: 25,
+    bins: 35,
     price: 229,
     description: 'Ideal for 2-bedroom homes and apartments',
     popular: true,
@@ -23,7 +23,7 @@ const STANDARD_PACKAGES = [
   {
     id: '3bed',
     name: '3-Bedroom Home',
-    bins: 40,
+    bins: 50,
     price: 329,
     description: 'Great for larger homes and families',
     popular: false,
@@ -33,7 +33,7 @@ const STANDARD_PACKAGES = [
 export default function PackageSelector() {
   const [selectedPackage, setSelectedPackage] = useState('2bed')
   const [customMode, setCustomMode] = useState(false)
-  const [customBins, setCustomBins] = useState(25)
+  const [customBins, setCustomBins] = useState(35) // Default starting point
 
   const calculateCustomPrice = (bins: number) => {
     // $8 per bin base price
@@ -43,11 +43,10 @@ export default function PackageSelector() {
   // Dynamic extrapolation logic updated to clarify entire living space
   const getEstimatedHouseSize = (bins: number) => {
     if (bins <= 20) return 'Studio / 1-Bed Home'
-    if (bins <= 35) return '1-2 Bedroom Home'
-    if (bins <= 50) return '2-3 Bedroom Home'
-    if (bins <= 70) return '3-4 Bedroom Home'
-    if (bins <= 90) return '4-5 Bedroom Home'
-    return 'Entire 5+ Bedroom Home'
+    if (bins <= 35) return '2-Bedroom Home'
+    if (bins <= 50) return '3-Bedroom Home'
+    if (bins <= 75) return '4-5 Bedroom Home'
+    return 'Larger House / Estate'
   }
 
   const handleCustomIncrease = () => {
@@ -55,7 +54,8 @@ export default function PackageSelector() {
   }
 
   const handleCustomDecrease = () => {
-    setCustomBins(prev => Math.max(prev - 5, 5))
+    // Raised the floor to 15 bins to match the minimum standard package
+    setCustomBins(prev => Math.max(prev - 5, 15))
   }
 
   return (
@@ -201,7 +201,7 @@ export default function PackageSelector() {
                 <div className="flex items-center justify-between mb-6">
                   <button
                     onClick={handleCustomDecrease}
-                    disabled={customBins <= 5}
+                    disabled={customBins <= 15}
                     className="bg-white/20 hover:bg-white/30 disabled:opacity-50 disabled:cursor-not-allowed rounded-full p-3 transition-all"
                   >
                     <Minus className="h-6 w-6" />
@@ -224,7 +224,7 @@ export default function PackageSelector() {
                 {/* Range Slider */}
                 <input
                   type="range"
-                  min="5"
+                  min="15"
                   max="100"
                   step="5"
                   value={customBins}
@@ -232,7 +232,7 @@ export default function PackageSelector() {
                   className="w-full h-2 bg-white/20 rounded-lg appearance-none cursor-pointer accent-orange"
                 />
                 <div className="flex justify-between mt-2 text-sm text-cool-100">
-                  <span>5 bins</span>
+                  <span>15 bins</span>
                   <span>100 bins</span>
                 </div>
               </div>
