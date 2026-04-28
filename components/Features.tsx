@@ -33,7 +33,7 @@ export default function Features() {
                 <ul className="space-y-2">
                   <li className="flex items-center space-x-2 text-gray-700">
                     <Clock className="h-4 w-4 text-orange flex-shrink-0" />
-                    <span className="text-sm">On-time delivery guaranteed</span>
+                    <span className="text-sm">Delivered and picked up on your schedule</span>
                   </li>
                   <li className="flex items-center space-x-2 text-gray-700">
                     <Package className="h-4 w-4 text-orange flex-shrink-0" />
