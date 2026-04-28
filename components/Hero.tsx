@@ -62,8 +62,8 @@ export default function Hero() {
           <div className="relative">
             <div className="relative h-[500px] rounded-2xl overflow-hidden shadow-2xl transform hover:scale-105 transition-transform duration-300">
               <Image
-                src="https://images.unsplash.com/photo-1600880292203-757bb62b4baf?w=800&h=1000&fit=crop"
-                alt="Stackable moving bins being loaded"
+                src="https://images.unsplash.com/photo-1581578731548-c64695cc6952?w=800&h=1000&fit=crop"
+                alt="Person carrying moving boxes"
                 fill
                 className="object-cover"
                 priority
