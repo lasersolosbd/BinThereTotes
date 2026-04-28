@@ -18,7 +18,7 @@ const FAQS = [
   },
   {
     question: 'What size are the bins?',
-    answer: 'Our bins are 27" L x 17" W x 12" H - the perfect size for most household items. They\'re stackable, have comfortable handles, and hold up to 65 pounds each. Unlike cardboard boxes, they won\'t collapse or tear.',
+    answer: 'Our bins are Bottom Exterior Dimensions: Length: 18.6" x Width: 12.75" x Height: 12.9" Bottom Interior Dimensions: Length: 18" x Width: 12" x Height: 12.25" - the perfect size for most household items. They\'re stackable, have comfortable handles, and hold up to 65 pounds each. Unlike cardboard boxes, they won\'t collapse or tear.',
   },
   {
     question: 'Do you deliver and pick up?',
