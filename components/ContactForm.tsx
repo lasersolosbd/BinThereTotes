@@ -291,7 +291,7 @@ export default function ContactForm() {
                   <Calendar className="h-5 w-5" />
                   <span>Reserve My Dates</span>
                 </div>
-                <div className="text-xs mt-1 opacity-80">High Intent</div>
+                <div className="text-xs mt-1 opacity-80">Ready Now</div>
               </button>
               <button
                 onClick={() => setActivePath('inquiry')}
