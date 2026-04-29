@@ -6,7 +6,8 @@ import { Phone, Calendar, MessageSquare, Send, CheckCircle, Bot, Mic, Keyboard, 
 type ViewState = 'request' | 'ai' | 'quote'
 
 interface RequestFormData {
-  fullName: string
+  firstName: string
+  lastName: string
   email: string
   phone: string
   currentAddress: string
@@ -21,7 +22,8 @@ interface RequestFormData {
 }
 
 interface QuoteFormData {
-  fullName: string
+  firstName: string
+  lastName: string
   email: string
   phone: string
   currentAddress: string
@@ -38,14 +40,14 @@ export default function ContactForm() {
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [submitStatus, setSubmitStatus] = useState<'idle' | 'success' | 'error'>('idle')
 
-  // Form 1: Request to Book (Now with Address Fields)
+  // Form 1: Request to Book
   const [requestData, setRequestData] = useState<RequestFormData>({
-    fullName: '', email: '', phone: '', currentAddress: '', currentZip: '', movingToAddress: '', movingToZip: '', package: '3bed', dropOffDate: '', pickUpDate: '', agreeSMS: false, agreeVoice: false
+    firstName: '', lastName: '', email: '', phone: '', currentAddress: '', currentZip: '', movingToAddress: '', movingToZip: '', package: '3bed', dropOffDate: '', pickUpDate: '', agreeSMS: false, agreeVoice: false
   })
 
   // Form 2: Custom Quote
   const [quoteData, setQuoteData] = useState<QuoteFormData>({
-    fullName: '', email: '', phone: '', currentAddress: '', currentZip: '', movingToAddress: '', movingToZip: '', questions: '', agreeSMS: false, agreeVoice: false
+    firstName: '', lastName: '', email: '', phone: '', currentAddress: '', currentZip: '', movingToAddress: '', movingToZip: '', questions: '', agreeSMS: false, agreeVoice: false
   })
 
   // Handlers
@@ -70,7 +72,7 @@ export default function ContactForm() {
   }
 
   const submitWebhook = async (payload: any) => {
-    const webhookUrl = 'https://services.leadconnectorhq.com/hooks/nQv4T6cT4sx1HYZZVpsn/webhook-trigger/ddcc6997-7fad-4cee-b2de-653cd224e260'
+    const webhookUrl = 'https://services.leadconnectorhq.com/hooks/YOUR_WEBHOOK_ID_HERE'
     return fetch(webhookUrl, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -205,10 +207,23 @@ export default function ContactForm() {
             {/* TAB 1: REQUEST TO BOOK */}
             {activeView === 'request' && submitStatus !== 'success' && (
               <form onSubmit={handleRequestSubmit} className="space-y-6 animate-fade-in">
+                
+                {/* Name Split */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-sm font-semibold text-navy mb-1">Full Name *</label>
-                    <input type="text" name="fullName" value={requestData.fullName} onChange={handleRequestChange} required className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange outline-none" />
+                    <label className="block text-sm font-semibold text-navy mb-1">First Name *</label>
+                    <input type="text" name="firstName" value={requestData.firstName} onChange={handleRequestChange} required className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange outline-none" />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-semibold text-navy mb-1">Last Name *</label>
+                    <input type="text" name="lastName" value={requestData.lastName} onChange={handleRequestChange} required className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange outline-none" />
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-semibold text-navy mb-1">Email *</label>
+                    <input type="email" name="email" value={requestData.email} onChange={handleRequestChange} required className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange outline-none" />
                   </div>
                   <div>
                     <label className="block text-sm font-semibold text-navy mb-1">Phone *</label>
@@ -216,12 +231,6 @@ export default function ContactForm() {
                   </div>
                 </div>
 
-                <div>
-                  <label className="block text-sm font-semibold text-navy mb-1">Email *</label>
-                  <input type="email" name="email" value={requestData.email} onChange={handleRequestChange} required className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange outline-none" />
-                </div>
-
-                {/* New Address Fields for Booking */}
                 <div className="pt-4 border-t border-gray-100">
                   <h4 className="text-sm font-bold text-navy uppercase tracking-wider mb-4">Location Details</h4>
                   <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-4">
@@ -270,7 +279,6 @@ export default function ContactForm() {
                   </div>
                 </div>
 
-                {/* A2P Checkboxes */}
                 <div className="space-y-4 pt-4 border-t border-gray-100">
                   <div className="flex items-start space-x-3 bg-navy/5 p-4 rounded-lg border border-navy/10">
                     <input type="checkbox" id="req-agreeSMS" name="agreeSMS" checked={requestData.agreeSMS} onChange={handleRequestChange} required className="mt-1 h-5 w-5 text-orange focus:ring-orange rounded" />
@@ -320,20 +328,28 @@ export default function ContactForm() {
             {/* TAB 3: CUSTOM QUOTE */}
             {activeView === 'quote' && submitStatus !== 'success' && (
               <form onSubmit={handleQuoteSubmit} className="space-y-6 animate-fade-in">
+                
+                {/* Name Split */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-sm font-semibold text-navy mb-1">Full Name *</label>
-                    <input type="text" name="fullName" value={quoteData.fullName} onChange={handleQuoteChange} required className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange outline-none" />
+                    <label className="block text-sm font-semibold text-navy mb-1">First Name *</label>
+                    <input type="text" name="firstName" value={quoteData.firstName} onChange={handleQuoteChange} required className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange outline-none" />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-semibold text-navy mb-1">Last Name *</label>
+                    <input type="text" name="lastName" value={quoteData.lastName} onChange={handleQuoteChange} required className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange outline-none" />
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-semibold text-navy mb-1">Email *</label>
+                    <input type="email" name="email" value={quoteData.email} onChange={handleQuoteChange} required className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange outline-none" />
                   </div>
                   <div>
                     <label className="block text-sm font-semibold text-navy mb-1">Phone *</label>
                     <input type="tel" name="phone" value={quoteData.phone} onChange={handleQuoteChange} required className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange outline-none" />
                   </div>
-                </div>
-
-                <div>
-                  <label className="block text-sm font-semibold text-navy mb-1">Email *</label>
-                  <input type="email" name="email" value={quoteData.email} onChange={handleQuoteChange} required className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange outline-none" />
                 </div>
 
                 <div className="pt-4 border-t border-gray-100">
@@ -366,7 +382,6 @@ export default function ContactForm() {
                   <textarea name="questions" value={quoteData.questions} onChange={handleQuoteChange} required rows={4} className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange outline-none resize-none" placeholder="Tell us about your move. How many rooms? Any special requests?" />
                 </div>
 
-                {/* A2P Checkboxes */}
                 <div className="space-y-4 pt-4 border-t border-gray-100">
                   <div className="flex items-start space-x-3 bg-navy/5 p-4 rounded-lg border border-navy/10">
                     <input type="checkbox" id="quote-agreeSMS" name="agreeSMS" checked={quoteData.agreeSMS} onChange={handleQuoteChange} required className="mt-1 h-5 w-5 text-orange focus:ring-orange rounded" />
