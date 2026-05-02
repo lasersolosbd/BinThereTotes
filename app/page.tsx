@@ -30,12 +30,34 @@ const center = {
   lng: -84.1500
 }
 
+// Custom Muted Silver Map Style
+const silverMapStyle = [
+  { elementType: "geometry", stylers: [{ color: "#f5f5f5" }] },
+  { elementType: "labels.icon", stylers: [{ visibility: "on" }] },
+  { elementType: "labels.text.fill", stylers: [{ color: "#616161" }] },
+  { elementType: "labels.text.stroke", stylers: [{ color: "#f5f5f5" }] },
+  { featureType: "administrative.land_parcel", elementType: "labels.text.fill", stylers: [{ color: "#bdbdbd" }] },
+  { featureType: "poi", elementType: "geometry", stylers: [{ color: "#eeeeee" }] },
+  { featureType: "poi", elementType: "labels.text.fill", stylers: [{ color: "#757575" }] },
+  { featureType: "poi.park", elementType: "geometry", stylers: [{ color: "#e5e5e5" }] },
+  { featureType: "poi.park", elementType: "labels.text.fill", stylers: [{ color: "#9e9e9e" }] },
+  { featureType: "road", elementType: "geometry", stylers: [{ color: "#ffffff" }] },
+  { featureType: "road.arterial", elementType: "labels.text.fill", stylers: [{ color: "#757575" }] },
+  { featureType: "road.highway", elementType: "geometry", stylers: [{ color: "#dadada" }] },
+  { featureType: "road.highway", elementType: "labels.text.fill", stylers: [{ color: "#616161" }] },
+  { featureType: "road.local", elementType: "labels.text.fill", stylers: [{ color: "#9e9e9e" }] },
+  { featureType: "transit.line", elementType: "geometry", stylers: [{ color: "#e5e5e5" }] },
+  { featureType: "transit.station", elementType: "geometry", stylers: [{ color: "#eeeeee" }] },
+  { featureType: "water", elementType: "geometry", stylers: [{ color: "#c9c9c9" }] },
+  { featureType: "water", elementType: "labels.text.fill", stylers: [{ color: "#9e9e9e" }] }
+]
+
 export default function Home() {
   const [activePin, setActivePin] = useState<typeof serviceAreas[0] | null>(null)
 
   const { isLoaded } = useJsApiLoader({
     id: 'google-map-script',
-    googleMapsApiKey: "AIzaSyBibJqdJLOMmS0sOWsHqSKT4jfbn2qp9G0" // Protected by HTTP Referrer Restriction in Google Cloud
+    googleMapsApiKey: "AIzaSyBibJqdJLOMmS0sOWsHqSKT4jfbn2qp9G0" 
   })
 
   const onLoad = useCallback(function callback(map: any) {
@@ -92,6 +114,7 @@ export default function Home() {
                     zoomControl: true,
                     streetViewControl: false,
                     mapTypeControl: false,
+                    styles: silverMapStyle,
                   }}
                 >
                   {serviceAreas.map((area) => (
@@ -130,27 +153,28 @@ export default function Home() {
               )}
             </div>
 
-            {/* Right: Quick Links & USPs */}
+            {/* Right: Quick Links & USPs (Updated to 2x2 Grid) */}
             <div className="flex flex-col justify-between h-full">
               <div>
                 <h3 className="text-xl font-bold text-gray-900 mb-6">Explore Our Local Hubs</h3>
-                <div className="space-y-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   {serviceAreas.map((area) => (
                     <Link 
                       key={area.id} 
                       href={area.path} 
                       target="_blank"
-                      className="flex items-center justify-between p-5 bg-gray-50 rounded-2xl border border-gray-200 hover:border-orange-500 hover:bg-orange-50 transition-all group"
+                      className="flex flex-col items-center justify-center p-6 bg-gray-50 rounded-2xl border border-gray-200 hover:border-orange-500 hover:bg-orange-50 transition-all group text-center"
                     >
-                      <div className="flex items-center gap-4">
-                        <div className="w-10 h-10 bg-white rounded-xl flex items-center justify-center shadow-sm text-orange-500 font-bold">
-                          {area.name.charAt(0)}
-                        </div>
-                        <span className="font-bold text-gray-800">{area.name}</span>
+                      {/* Isometric Box SVG Icon */}
+                      <div className="w-12 h-12 bg-white rounded-xl flex items-center justify-center shadow-sm text-orange-500 mb-3 group-hover:scale-110 transition-transform">
+                        <svg className="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                          <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
+                          <polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline>
+                          <line x1="12" y1="22.08" x2="12" y2="12"></line>
+                        </svg>
                       </div>
-                      <svg className="w-5 h-5 text-gray-400 group-hover:text-orange-500 transform group-hover:translate-x-1 transition-all" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M14 5l7 7m0 0l-7 7m7-7H3" />
-                      </svg>
+                      <span className="font-bold text-gray-900">{area.name}</span>
+                      <span className="text-xs text-orange-500 font-medium mt-1 opacity-0 group-hover:opacity-100 transition-opacity">View Hub &rarr;</span>
                     </Link>
                   ))}
                 </div>
