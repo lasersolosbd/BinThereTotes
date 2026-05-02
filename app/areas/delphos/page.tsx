@@ -15,7 +15,7 @@ export default function DelphosSilo() {
       <Header />
       
       {/* Local Hero Section */}
-      <div className="bg-blue-600 py-20 relative">
+      <div className="bg-blue-600 pt-32 pb-20 relative">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h1 className="text-4xl font-extrabold text-white sm:text-5xl lg:text-6xl mb-6">
             Moving in Delphos? <br /> Rent Your Totes Locally.
@@ -59,10 +59,10 @@ export default function DelphosSilo() {
           <div className="bg-gray-50 p-8 rounded-2xl border border-gray-100 shadow-sm">
             <h3 className="text-xl font-bold text-gray-900 mb-4">Why Delphos Chooses Reusable Totes:</h3>
             <ul className="grid grid-cols-1 md:grid-cols-2 gap-4 text-gray-600">
-              <li className="flex items-center gap-2"><span className="text-orange-500 font-bold">✔</span> <strong>Weather Proof:</strong> No soggy cardboard in Ohio rain.</li>
-              <li className="flex items-center gap-2"><span className="text-orange-500 font-bold">✔</span> <strong>Stackable:</strong> Maximize space in your moving truck.</li>
-              <li className="flex items-center gap-2"><span className="text-orange-500 font-bold">✔</span> <strong>Sanitized:</strong> Every bin is deep-cleaned before delivery.</li>
-              <li className="flex items-center gap-2"><span className="text-orange-500 font-bold">✔</span> <strong>Zero Waste:</strong> No boxes to break down or recycle.</li>
+              <li className="flex items-center gap-2"><span className="text-orange-500 font-bold">â</span> <strong>Weather Proof:</strong> No soggy cardboard in Ohio rain.</li>
+              <li className="flex items-center gap-2"><span className="text-orange-500 font-bold">â</span> <strong>Stackable:</strong> Maximize space in your moving truck.</li>
+              <li className="flex items-center gap-2"><span className="text-orange-500 font-bold">â</span> <strong>Sanitized:</strong> Every bin is deep-cleaned before delivery.</li>
+              <li className="flex items-center gap-2"><span className="text-orange-500 font-bold">â</span> <strong>Zero Waste:</strong> No boxes to break down or recycle.</li>
             </ul>
           </div>
 
