@@ -1,4 +1,5 @@
 'use client'
+import Link from 'next/link'
 
 import { useState } from 'react'
 import { Phone, Calendar, MessageSquare, Send, CheckCircle, Bot, Mic, Keyboard, MapPin, Mail } from 'lucide-react'
@@ -356,11 +357,11 @@ export default function ContactForm() {
                 <div className="space-y-4 pt-4 border-t border-gray-100">
                   <div className="flex items-start space-x-3 bg-navy/5 p-4 rounded-lg border border-navy/10">
                     <input type="checkbox" id="req-agreeSMS" name="agreeSMS" checked={requestData.agreeSMS} onChange={handleRequestChange} className="mt-1 h-5 w-5 text-orange focus:ring-orange rounded" />
-                    <label htmlFor="req-agreeSMS" className="text-xs text-gray-800">By providing your phone number, you consent to receive marketing text messages from Bin There Totes. Consent is not a condition of purchase. Message & data rates may apply. Reply STOP to opt out.</label>
+                    <label htmlFor="req-agreeSMS" className="text-xs text-gray-800">By providing your phone number, you consent to receive marketing text messages from Bin There Totes. Consent is not a condition of purchase. Message & data rates may apply. Reply STOP to opt out. See our{' '}<Link href="/privacy" target="_blank" className="underline text-orange-600 hover:text-orange-800">Privacy Policy</Link>.</label>
                   </div>
                   <div className="flex items-start space-x-3 bg-navy/5 p-4 rounded-lg border border-navy/10">
                     <input type="checkbox" id="req-agreeVoice" name="agreeVoice" checked={requestData.agreeVoice} onChange={handleRequestChange} className="mt-1 h-5 w-5 text-navy focus:ring-navy rounded" />
-                    <label htmlFor="req-agreeVoice" className="text-xs text-gray-800"><span className="font-bold text-navy block">AI Voice & Automated Calls (Optional)</span>I consent to receive phone calls from Bin There Totes, which may include automated, pre-recorded, or AI voice assistant communications. I understand I can opt out of future calls by requesting to be placed on the do-not-call list.</label>
+                    <label htmlFor="req-agreeVoice" className="text-xs text-gray-800"><span className="font-bold text-navy block">AI Voice & Automated Calls (Optional)</span>I consent to receive phone calls from Bin There Totes, which may include automated, pre-recorded, or AI voice assistant communications. I understand I can opt out of future calls by requesting to be placed on the do-not-call list. View our{' '}<Link href="/terms" target="_blank" className="underline text-blue-600 hover:text-blue-800">Terms of Service</Link>.</label>
                   </div>
                 </div>
 
@@ -468,11 +469,11 @@ export default function ContactForm() {
                 <div className="space-y-4 pt-4 border-t border-gray-100">
                   <div className="flex items-start space-x-3 bg-navy/5 p-4 rounded-lg border border-navy/10">
                     <input type="checkbox" id="quote-agreeSMS" name="agreeSMS" checked={quoteData.agreeSMS} onChange={handleQuoteChange} className="mt-1 h-5 w-5 text-orange focus:ring-orange rounded" />
-                    <label htmlFor="quote-agreeSMS" className="text-xs text-gray-800">By providing your phone number, you consent to receive marketing text messages from Bin There Totes. Consent is not a condition of purchase. Message & data rates may apply. Reply STOP to opt out.</label>
+                    <label htmlFor="quote-agreeSMS" className="text-xs text-gray-800">By providing your phone number, you consent to receive marketing text messages from Bin There Totes. Consent is not a condition of purchase. Message & data rates may apply. Reply STOP to opt out. See our{' '}<Link href="/privacy" target="_blank" className="underline text-orange-600 hover:text-orange-800">Privacy Policy</Link>.</label>
                   </div>
                   <div className="flex items-start space-x-3 bg-navy/5 p-4 rounded-lg border border-navy/10">
                     <input type="checkbox" id="quote-agreeVoice" name="agreeVoice" checked={quoteData.agreeVoice} onChange={handleQuoteChange} className="mt-1 h-5 w-5 text-navy focus:ring-navy rounded" />
-                    <label htmlFor="quote-agreeVoice" className="text-xs text-gray-800"><span className="font-bold text-navy block">AI Voice & Automated Calls (Optional)</span>I consent to receive phone calls from Bin There Totes, which may include automated, pre-recorded, or AI voice assistant communications. I understand I can opt out of future calls by requesting to be placed on the do-not-call list.</label>
+                    <label htmlFor="quote-agreeVoice" className="text-xs text-gray-800"><span className="font-bold text-navy block">AI Voice & Automated Calls (Optional)</span>I consent to receive phone calls from Bin There Totes, which may include automated, pre-recorded, or AI voice assistant communications. I understand I can opt out of future calls by requesting to be placed on the do-not-call list. View our{' '}<Link href="/terms" target="_blank" className="underline text-blue-600 hover:text-blue-800">Terms of Service</Link>.</label>
                   </div>
                 </div>
 
