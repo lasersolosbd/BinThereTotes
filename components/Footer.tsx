@@ -54,6 +54,11 @@ export default function Footer() {
                   Contact
                 </a>
               </li>
+              <li>
+                <a href="/#areas" className="text-cool-100 hover:text-orange transition-colors">
+                  Service Areas
+                </a>
+              </li>
             </ul>
           </div>
 
