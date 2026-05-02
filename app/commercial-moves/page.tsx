@@ -15,7 +15,7 @@ export default function CommercialMoves() {
       <Header />
       
       {/* B2B Hero Section */}
-      <div className="bg-gray-900 py-20 relative overflow-hidden">
+      <div className="bg-gray-900 pt-32 pb-20 relative overflow-hidden">
         <div className="absolute inset-0 opacity-20 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-blue-500 via-gray-900 to-gray-900"></div>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center">
           <span className="text-orange-500 font-bold tracking-wider uppercase text-sm mb-4 block">Corporate Relocation Logistics</span>
@@ -46,10 +46,10 @@ export default function CommercialMoves() {
               Plastic moving bins significantly reduce office downtime by eliminating the need to build and tape cardboard boxes. Our standardized, stackable totes fit perfectly on custom commercial dollies, allowing your team to pack and transport equipment faster while minimizing disruption to business operations.
             </p>
             <ul className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-gray-600">
-              <li className="flex items-center gap-2"><span className="text-orange-500">✔</span> Pre-assembled and ready to pack</li>
-              <li className="flex items-center gap-2"><span className="text-orange-500">✔</span> Custom four-wheel dollies included</li>
-              <li className="flex items-center gap-2"><span className="text-orange-500">✔</span> Ergonomic handles prevent injuries</li>
-              <li className="flex items-center gap-2"><span className="text-orange-500">✔</span> Nests perfectly when empty</li>
+              <li className="flex items-center gap-2"><span className="text-orange-500">â</span> Pre-assembled and ready to pack</li>
+              <li className="flex items-center gap-2"><span className="text-orange-500">â</span> Custom four-wheel dollies included</li>
+              <li className="flex items-center gap-2"><span className="text-orange-500">â</span> Ergonomic handles prevent injuries</li>
+              <li className="flex items-center gap-2"><span className="text-orange-500">â</span> Nests perfectly when empty</li>
             </ul>
           </div>
 
@@ -62,10 +62,10 @@ export default function CommercialMoves() {
               Yes, our commercial moving totes are highly secure for transporting sensitive and confidential documents. Each durable plastic bin features interlocking lids that can be securely sealed with tamper-evident zip ties, ensuring HIPAA compliance and protecting your critical business records during transit.
             </p>
             <ul className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-gray-600">
-              <li className="flex items-center gap-2"><span className="text-orange-500">✔</span> Tamper-evident zip tie locks</li>
-              <li className="flex items-center gap-2"><span className="text-orange-500">✔</span> Crush-proof hard plastic shell</li>
-              <li className="flex items-center gap-2"><span className="text-orange-500">✔</span> HIPAA compliant transit options</li>
-              <li className="flex items-center gap-2"><span className="text-orange-500">✔</span> Weather-resistant protection</li>
+              <li className="flex items-center gap-2"><span className="text-orange-500">â</span> Tamper-evident zip tie locks</li>
+              <li className="flex items-center gap-2"><span className="text-orange-500">â</span> Crush-proof hard plastic shell</li>
+              <li className="flex items-center gap-2"><span className="text-orange-500">â</span> HIPAA compliant transit options</li>
+              <li className="flex items-center gap-2"><span className="text-orange-500">â</span> Weather-resistant protection</li>
             </ul>
           </div>
 
@@ -78,10 +78,10 @@ export default function CommercialMoves() {
               We recommend estimating five to seven moving totes per employee workspace or standard desk. For common areas, file rooms, and IT equipment, additional bins will be required. Our commercial logistics team will help you calculate the exact inventory needed for your specific office layout.
             </p>
             <ul className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-gray-600">
-              <li className="flex items-center gap-2"><span className="text-orange-500">✔</span> Custom corporate volume discounts</li>
-              <li className="flex items-center gap-2"><span className="text-orange-500">✔</span> IT equipment crates available</li>
-              <li className="flex items-center gap-2"><span className="text-orange-500">✔</span> Flexible long-term rental extensions</li>
-              <li className="flex items-center gap-2"><span className="text-orange-500">✔</span> Dedicated account manager</li>
+              <li className="flex items-center gap-2"><span className="text-orange-500">â</span> Custom corporate volume discounts</li>
+              <li className="flex items-center gap-2"><span className="text-orange-500">â</span> IT equipment crates available</li>
+              <li className="flex items-center gap-2"><span className="text-orange-500">â</span> Flexible long-term rental extensions</li>
+              <li className="flex items-center gap-2"><span className="text-orange-500">â</span> Dedicated account manager</li>
             </ul>
           </div>
 
