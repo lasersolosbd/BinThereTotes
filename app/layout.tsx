@@ -28,14 +28,16 @@ export default function RootLayout({
 }) {
   const jsonLd = {
     "@context": "https://schema.org",
-    "@type": "LocalBusiness",
+    "@type": "MovingCompany",
     "name": "Bin There Totes",
-    "image": "https://bin-there-totes.vercel.app/logo.png",
-    "description": "Veteran-owned, eco-friendly moving bin rentals serving residential and commercial clients in Lima, OH. We deliver sanitized, stackable plastic totes directly to your door and pick them up when you are finished moving.",
+    "description": "Eco-friendly, sanitized plastic moving bin rentals in Lima and Allen County, Ohio.",
+    "url": "https://bin-there-totes.vercel.app",
+    "telephone": "+15678251714",
     "address": {
       "@type": "PostalAddress",
       "addressLocality": "Lima",
       "addressRegion": "OH",
+      "postalCode": "45801",
       "addressCountry": "US"
     },
     "areaServed": [
@@ -45,23 +47,10 @@ export default function RootLayout({
       { "@type": "City", "name": "Wapakoneta" },
       { "@type": "County", "name": "Allen County" }
     ],
-    "url": "https://bin-there-totes.vercel.app",
-    "makesOffer": [
-      {
-        "@type": "Offer",
-        "itemOffered": {
-          "@type": "Service",
-          "name": "Residential Moving Bin Rentals"
-        }
-      },
-      {
-        "@type": "Offer",
-        "itemOffered": {
-          "@type": "Service",
-          "name": "Commercial Office Relocation Bins"
-        }
-      }
-    ]
+    "founder": {
+      "@type": "Person",
+      "name": "Mike Sheets"
+    }
   };
 
   return (
