@@ -174,7 +174,6 @@ export default function Home() {
                         </svg>
                       </div>
                       <span className="font-bold text-gray-900">{area.name}</span>
-                      <span className="text-xs text-orange-500 font-medium mt-1 opacity-0 group-hover:opacity-100 transition-opacity">View Hub &rarr;</span>
                     </Link>
                   ))}
                 </div>
@@ -183,7 +182,7 @@ export default function Home() {
               {/* Commercial & Contact Bridge */}
               <div className="mt-8 pt-8 border-t border-gray-100">
                 <Link href="/commercial-moves" target="_blank" className="flex items-center gap-4 p-4 bg-gray-900 rounded-2xl text-white hover:bg-gray-800 transition-colors">
-                  <div className="p-2 bg-gray-700 rounded-lg text-xl">🏢</div>
+                  <div className="p-2 bg-gray-700 rounded-lg text-xl">ð¢</div>
                   <div>
                     <p className="font-bold">Commercial & Office Relocations</p>
                     <p className="text-sm text-gray-400">Specialized logistics for local businesses.</p>
