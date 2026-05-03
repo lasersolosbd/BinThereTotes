@@ -82,10 +82,20 @@ export default function ContactForm() {
       if (res.ok) {
         setAiSubmitted(true)
         if (typeof window !== 'undefined') {
-          const trigger = document.querySelector('[data-chat-widget-trigger]') as HTMLElement | null
-          if (trigger) trigger.click()
-          else if ((window as any).openChatWidget) (window as any).openChatWidget(aiData.firstName)
-          else if ((window as any).LeadConnector?.ChatWidget?.openWidget) (window as any).LeadConnector.ChatWidget.openWidget()
+          const lc = (window as any).LeadConnector
+          if (lc && lc.ChatWidget) {
+            // Identify the user to bypass GHL's internal lead form
+            lc.ChatWidget.identify({
+              name: `${aiData.firstName} ${aiData.lastName}`,
+              email: aiData.email,
+              phone: aiData.phone
+            })
+            // Unhide the widget container
+            const widgetEl = document.getElementById('leadconnector-chat-widget')
+            if (widgetEl) widgetEl.style.setProperty('display', 'block', 'important')
+            // Open the widget menu (Chat vs Voice selection)
+            lc.ChatWidget.openWidget()
+          }
         }
       } else {
         setSubmitStatus('error')
