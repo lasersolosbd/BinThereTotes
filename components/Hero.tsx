@@ -5,19 +5,8 @@ import Image from 'next/image'
 
 export default function Hero() {
   return (
-    <section className="relative pt-32 pb-20 overflow-hidden">
-      {/* Background */}
-      <div className="absolute inset-0 -z-10">
-        <Image
-          src="/hero-bins.webp"
-          alt="Branded Bin There Totes being loaded into a moving truck in an Allen County neighborhood"
-          fill
-          priority
-          className="object-cover object-center brightness-[0.7]"
-        />
-      </div>
-      
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+    <section className="bg-white pt-32 pb-20 overflow-hidden">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
           {/* Left Content */}
           <div className="space-y-8 animate-fade-in">
@@ -28,13 +17,13 @@ export default function Hero() {
             </div>
 
             {/* Main Headline */}
-            <h1 className="text-5xl sm:text-6xl lg:text-7xl font-display font-bold text-navy leading-tight">
-              The <span className="text-orange">"Bin There,<br />Done That"</span><br />Way to Move
+            <h1 className="text-5xl sm:text-6xl lg:text-7xl font-display font-bold text-gray-900 leading-tight">
+              The <span className="text-orange-500">"Bin There,<br />Done That"</span><br />Way to Move
             </h1>
 
             {/* Subheadline */}
             <p className="text-xl text-gray-700 leading-relaxed">
-              Rent our stackable bins, pack them at your pace, and we'll pick them up. 
+              Rent our stackable bins, pack them at your pace, and we'll pick them up.{' '}
               Skip the cardboard chaos. <span className="font-semibold text-navy">Join the "Done That" club</span> in Lima, OH.
             </p>
 
@@ -68,7 +57,6 @@ export default function Hero() {
 
           {/* Right Image */}
           <div className="relative">
-            {/* Hover scale effect removed from this div */}
             <div className="relative h-[500px] rounded-2xl overflow-hidden shadow-2xl">
               <Image
                 src="/hero-bins.webp"
