@@ -35,9 +35,3 @@
   }
 }
 
-/* GHL Chat Widget — hide bubble AND pop-up greeting until AI lead gate is submitted */
-#leadconnector-chat-widget,
-.lc_sw-widget-pre-header,
-#chat-widget-container {
-  display: none !important;
-}
