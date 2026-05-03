@@ -7,7 +7,15 @@ export default function Hero() {
   return (
     <section className="relative pt-32 pb-20 overflow-hidden">
       {/* Background */}
-      <div className="absolute inset-0 gradient-mesh"></div>
+      <div className="absolute inset-0 -z-10">
+        <Image
+          src="/hero-bins.webp"
+          alt="Branded Bin There Totes being loaded into a moving truck in an Allen County neighborhood"
+          fill
+          priority
+          className="object-cover object-center brightness-[0.7]"
+        />
+      </div>
       
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
@@ -63,8 +71,8 @@ export default function Hero() {
             {/* Hover scale effect removed from this div */}
             <div className="relative h-[500px] rounded-2xl overflow-hidden shadow-2xl">
               <Image
-                src="/hero-moving.jpg"
-                alt="Moving day with stacked boxes"
+                src="/hero-bins.webp"
+                alt="Family using Bin There Totes branded moving bins at their Allen County home"
                 fill
                 className="object-cover"
                 priority
