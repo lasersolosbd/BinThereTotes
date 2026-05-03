@@ -1,4 +1,5 @@
 import { Package, MapPin, Phone, Mail, Facebook, Instagram } from 'lucide-react'
+import Link from 'next/link'
 
 export default function Footer() {
   const currentYear = new Date().getFullYear()
@@ -55,9 +56,9 @@ export default function Footer() {
                 </a>
               </li>
               <li>
-                <a href="/#areas" className="text-cool-100 hover:text-orange transition-colors">
+                <Link href="/#areas" className="text-cool-100 hover:text-orange transition-colors">
                   Service Areas
-                </a>
+                </Link>
               </li>
             </ul>
           </div>
