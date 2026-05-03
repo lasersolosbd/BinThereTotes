@@ -50,6 +50,53 @@ export default function ContactForm() {
     firstName: '', lastName: '', email: '', phone: '', currentAddress: '', currentZip: '', movingToAddress: '', movingToZip: '', questions: '', agreeSMS: false, agreeVoice: false
   })
 
+
+  const [aiData, setAiData] = useState({ firstName: '', lastName: '', email: '', phone: '' })
+  const [aiSubmitted, setAiSubmitted] = useState(false)
+
+  const handleAiChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target
+    if (errors[name]) setErrors(prev => ({ ...prev, [name]: '' }))
+    setAiData(prev => ({ ...prev, [name]: value }))
+  }
+
+  const validateAi = () => {
+    const e: Record<string, string> = {}
+    if (!aiData.firstName.trim()) e.firstName = "Please fill this out."
+    if (!aiData.lastName.trim()) e.lastName = "Please fill this out."
+    if (!aiData.email.trim() || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(aiData.email)) e.email = "Please enter a valid email."
+    if (aiData.phone.replace(/\D/g, '').length < 10) e.phone = "Please enter a valid 10-digit phone number."
+    return e
+  }
+
+  const handleAiSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    const validationErrors = validateAi()
+    if (Object.keys(validationErrors).length > 0) {
+      setErrors(validationErrors)
+      return
+    }
+    setIsSubmitting(true)
+    try {
+      const res = await submitWebhook({ lead_type: 'ai_chat', form_type: 'ask_ai', ...aiData })
+      if (res.ok) {
+        setAiSubmitted(true)
+        if (typeof window !== 'undefined') {
+          const trigger = document.querySelector('[data-chat-widget-trigger]') as HTMLElement | null
+          if (trigger) trigger.click()
+          else if ((window as any).openChatWidget) (window as any).openChatWidget(aiData.firstName)
+          else if ((window as any).LeadConnector?.ChatWidget?.openWidget) (window as any).LeadConnector.ChatWidget.openWidget()
+        }
+      } else {
+        setSubmitStatus('error')
+      }
+    } catch {
+      setSubmitStatus('error')
+    } finally {
+      setIsSubmitting(false)
+    }
+  }
+
   // Helper to calculate exactly 14 days later
   const getMinPickUpDate = (dropDateString: string) => {
     if (!dropDateString) return new Date().toISOString().split('T')[0]
@@ -139,7 +186,7 @@ export default function ContactForm() {
     setIsSubmitting(true)
     setSubmitStatus('idle')
     try {
-      const res = await submitWebhook({ lead_type: 'booking_request', ...requestData })
+      const res = await submitWebhook({ lead_type: 'booking_request', form_type: 'reserve', ...requestData })
       if (res.ok) setSubmitStatus('success')
       else setSubmitStatus('error')
     } catch {
@@ -160,7 +207,7 @@ export default function ContactForm() {
     setIsSubmitting(true)
     setSubmitStatus('idle')
     try {
-      const res = await submitWebhook({ lead_type: 'custom_quote', ...quoteData })
+      const res = await submitWebhook({ lead_type: 'custom_quote', form_type: 'custom', ...quoteData })
       if (res.ok) setSubmitStatus('success')
       else setSubmitStatus('error')
     } catch {
@@ -375,30 +422,56 @@ export default function ContactForm() {
 
             {/* TAB 2: AI ASSISTANT */}
             {activeView === 'ai' && (
-              <div className="text-center py-8 animate-fade-in">
-                <div className="w-24 h-24 bg-navy rounded-full mx-auto flex items-center justify-center mb-6 relative">
-                  <div className="absolute inset-0 rounded-full animate-ping bg-navy/20"></div>
-                  <Bot className="h-12 w-12 text-orange relative z-10" />
-                </div>
-                <h3 className="text-2xl font-bold text-navy mb-4">Hello! I'm your virtual assistant.</h3>
-                <p className="text-gray-600 mb-8 max-w-md mx-auto">
-                  I can answer questions about bin sizes, delivery areas, pricing, and availability. How would you like to connect?
-                </p>
-                
-                <div className="flex flex-col sm:flex-row gap-4 justify-center max-w-sm mx-auto">
-                  <button 
-                    onClick={() => alert("This will trigger the WebRTC Voice connection.")}
-                    className="flex-1 bg-navy text-white py-4 px-6 rounded-lg font-bold hover:bg-navy/90 transition-colors flex items-center justify-center gap-2"
-                  >
-                    <Mic className="h-5 w-5" /> Talk
-                  </button>
-                  <button 
-                    onClick={() => alert("This will pop open the GoHighLevel Chat Widget.")}
-                    className="flex-1 border-2 border-navy text-navy py-4 px-6 rounded-lg font-bold hover:bg-navy/5 transition-colors flex items-center justify-center gap-2"
-                  >
-                    <Keyboard className="h-5 w-5" /> Type
-                  </button>
-                </div>
+              <div className="animate-fade-in">
+                {aiSubmitted ? (
+                  <div className="text-center py-10">
+                    <CheckCircle className="h-16 w-16 text-green-500 mx-auto mb-4" />
+                    <h3 className="text-2xl font-bold text-navy mb-2">You're all set!</h3>
+                    <p className="text-gray-600 mb-2">Your info has been saved. The chat widget is opening now.</p>
+                    <p className="text-sm text-gray-400">(If it doesn't open automatically, look for the chat bubble in the corner.)</p>
+                  </div>
+                ) : (
+                  <>
+                    <div className="text-center mb-6">
+                      <div className="w-16 h-16 bg-navy rounded-full mx-auto flex items-center justify-center mb-4 relative">
+                        <div className="absolute inset-0 rounded-full animate-ping bg-navy/20"></div>
+                        <Bot className="h-8 w-8 text-orange relative z-10" />
+                      </div>
+                      <h3 className="text-xl font-bold text-navy mb-1">Chat with Elizabeth</h3>
+                      <p className="text-sm text-gray-600">Enter your info below to start chatting with our AI assistant.</p>
+                    </div>
+                    <form onSubmit={handleAiSubmit} noValidate className="space-y-4">
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                          <label className="block text-sm font-semibold text-navy mb-1">First Name *</label>
+                          <input type="text" name="firstName" value={aiData.firstName} onChange={handleAiChange} className={getInputClass('firstName')} />
+                          {errors.firstName && <p className="text-red-500 text-xs mt-1">{errors.firstName}</p>}
+                        </div>
+                        <div>
+                          <label className="block text-sm font-semibold text-navy mb-1">Last Name *</label>
+                          <input type="text" name="lastName" value={aiData.lastName} onChange={handleAiChange} className={getInputClass('lastName')} />
+                          {errors.lastName && <p className="text-red-500 text-xs mt-1">{errors.lastName}</p>}
+                        </div>
+                      </div>
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                          <label className="block text-sm font-semibold text-navy mb-1">Email *</label>
+                          <input type="email" name="email" value={aiData.email} onChange={handleAiChange} className={getInputClass('email')} />
+                          {errors.email && <p className="text-red-500 text-xs mt-1">{errors.email}</p>}
+                        </div>
+                        <div>
+                          <label className="block text-sm font-semibold text-navy mb-1">Phone *</label>
+                          <input type="tel" name="phone" value={aiData.phone} onChange={handleAiChange} maxLength={14} placeholder="5678251714" className={getInputClass('phone')} />
+                          {errors.phone && <p className="text-red-500 text-xs mt-1">{errors.phone}</p>}
+                        </div>
+                      </div>
+                      <button type="submit" disabled={isSubmitting} className="w-full bg-navy text-white py-4 rounded-lg font-bold hover:bg-navy/90 transition-colors disabled:opacity-50 flex justify-center items-center gap-2">
+                        {isSubmitting ? <span>Starting chat...</span> : <><Bot className="h-5 w-5" /><span>Start Chatting with Elizabeth</span></>}
+                      </button>
+                      <p className="text-xs text-gray-400 text-center">Your info is saved so we can follow up after your chat.</p>
+                    </form>
+                  </>
+                )}
               </div>
             )}
 
