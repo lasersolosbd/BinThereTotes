@@ -62,6 +62,12 @@ export default function RootLayout({
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
           strategy="beforeInteractive"
         />
+        <Script
+          src="https://beta.leadconnectorhq.com/loader.js"
+          data-resources-url="https://beta.leadconnectorhq.com/chat-widget/loader.js"
+          data-widget-id="69f78b8c94d4b148744faceb"
+          strategy="afterInteractive"
+        />
       </head>
       <body>{children}</body>
     </html>
