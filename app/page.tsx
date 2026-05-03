@@ -93,7 +93,7 @@ export default function Home() {
               </div>
               <div>
                 <p className="text-sm font-bold text-orange-800 uppercase tracking-wider">Official Service Provider</p>
-                <p className="text-lg font-extrabold text-gray-900">ALL OF ALLEN COUNTY</p>
+                <p className="text-lg font-extrabold text-gray-900">LIMA, OH AND SURROUNDING AREAS</p>
               </div>
             </div>
           </div>
