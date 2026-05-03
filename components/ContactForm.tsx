@@ -2,9 +2,9 @@
 import Link from 'next/link'
 
 import { useState } from 'react'
-import { Phone, Calendar, MessageSquare, Send, CheckCircle, Bot, Mic, Keyboard, MapPin, Mail } from 'lucide-react'
+import { Phone, Calendar, MessageSquare, Send, CheckCircle, MapPin, Mail } from 'lucide-react'
 
-type ViewState = 'request' | 'ai' | 'quote'
+type ViewState = 'request' | 'quote'
 
 interface RequestFormData {
   firstName: string
@@ -50,65 +50,6 @@ export default function ContactForm() {
     firstName: '', lastName: '', email: '', phone: '', currentAddress: '', currentZip: '', movingToAddress: '', movingToZip: '', questions: '', agreeSMS: false, agreeVoice: false
   })
 
-
-  const [aiData, setAiData] = useState({ firstName: '', lastName: '', email: '', phone: '' })
-  const [aiSubmitted, setAiSubmitted] = useState(false)
-
-  const handleAiChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target
-    if (errors[name]) setErrors(prev => ({ ...prev, [name]: '' }))
-    setAiData(prev => ({ ...prev, [name]: value }))
-  }
-
-  const validateAi = () => {
-    const e: Record<string, string> = {}
-    if (!aiData.firstName.trim()) e.firstName = "Please fill this out."
-    if (!aiData.lastName.trim()) e.lastName = "Please fill this out."
-    if (!aiData.email.trim() || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(aiData.email)) e.email = "Please enter a valid email."
-    if (aiData.phone.replace(/\D/g, '').length < 10) e.phone = "Please enter a valid 10-digit phone number."
-    return e
-  }
-
-  const handleAiSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    const validationErrors = validateAi()
-    if (Object.keys(validationErrors).length > 0) {
-      setErrors(validationErrors)
-      return
-    }
-    setIsSubmitting(true)
-    try {
-      const res = await submitWebhook({ lead_type: 'ai_chat', form_type: 'ask_ai', ...aiData })
-      if (res.ok) {
-        setAiSubmitted(true)
-        // 500ms delay gives the widget time to fully initialize before data handoff
-        setTimeout(() => {
-          if (typeof window !== 'undefined') {
-            const lc = (window as any).LeadConnector
-            if (lc && lc.ChatWidget) {
-              // 1. Push contact data — identifies the user to Elizabeth
-              lc.ChatWidget.identify({
-                name: `${aiData.firstName} ${aiData.lastName}`,
-                email: aiData.email,
-                phone: aiData.phone
-              })
-              // 2. Unhide the widget container
-              const widgetEl = document.getElementById('leadconnector-chat-widget')
-              if (widgetEl) widgetEl.style.setProperty('display', 'block', 'important')
-              // 3. Open the widget menu (Chat vs Voice selection)
-              lc.ChatWidget.openWidget()
-            }
-          }
-        }, 500)
-      } else {
-        setSubmitStatus('error')
-      }
-    } catch {
-      setSubmitStatus('error')
-    } finally {
-      setIsSubmitting(false)
-    }
-  }
 
   // Helper to calculate exactly 14 days later
   const getMinPickUpDate = (dropDateString: string) => {
@@ -295,21 +236,13 @@ export default function ContactForm() {
           <div className="lg:col-span-8 bg-white rounded-2xl shadow-xl overflow-hidden p-6 md:p-10">
             
             {/* TOP NAVIGATION MINI-BOXES */}
-            <div className="grid grid-cols-3 gap-3 md:gap-4 mb-8">
+            <div className="grid grid-cols-2 gap-3 md:gap-4 mb-8">
               <button 
                 onClick={() => changeView('request')}
                 className={`p-4 rounded-xl border-2 flex flex-col items-center text-center transition-all ${activeView === 'request' ? 'border-orange bg-orange/5' : 'border-gray-100 hover:border-orange/40 bg-white'}`}
               >
                 <Calendar className={`h-6 w-6 mb-2 ${activeView === 'request' ? 'text-orange' : 'text-gray-400'}`} />
                 <span className={`text-xs md:text-sm font-bold uppercase tracking-wider ${activeView === 'request' ? 'text-navy' : 'text-gray-500'}`}>Reserve</span>
-              </button>
-              
-              <button 
-                onClick={() => changeView('ai')}
-                className={`p-4 rounded-xl border-2 flex flex-col items-center text-center transition-all ${activeView === 'ai' ? 'border-orange bg-orange/5' : 'border-gray-100 hover:border-orange/40 bg-white'}`}
-              >
-                <Bot className={`h-6 w-6 mb-2 ${activeView === 'ai' ? 'text-orange' : 'text-gray-400'}`} />
-                <span className={`text-xs md:text-sm font-bold uppercase tracking-wider ${activeView === 'ai' ? 'text-navy' : 'text-gray-500'}`}>Ask AI</span>
               </button>
 
               <button 
@@ -432,62 +365,6 @@ export default function ContactForm() {
                 </button>
               </form>
             )}
-
-            {/* TAB 2: AI ASSISTANT */}
-            {activeView === 'ai' && (
-              <div className="animate-fade-in">
-                {aiSubmitted ? (
-                  <div className="text-center py-10">
-                    <CheckCircle className="h-16 w-16 text-green-500 mx-auto mb-4" />
-                    <h3 className="text-2xl font-bold text-navy mb-2">You're all set!</h3>
-                    <p className="text-gray-600 mb-2">Your info has been saved. The chat widget is opening now.</p>
-                    <p className="text-sm text-gray-400">(If it doesn't open automatically, look for the chat bubble in the corner.)</p>
-                  </div>
-                ) : (
-                  <>
-                    <div className="text-center mb-6">
-                      <div className="w-16 h-16 bg-navy rounded-full mx-auto flex items-center justify-center mb-4 relative">
-                        <div className="absolute inset-0 rounded-full animate-ping bg-navy/20"></div>
-                        <Bot className="h-8 w-8 text-orange relative z-10" />
-                      </div>
-                      <h3 className="text-xl font-bold text-navy mb-1">Chat with Elizabeth</h3>
-                      <p className="text-sm text-gray-600">Enter your info below to start chatting with our AI assistant.</p>
-                    </div>
-                    <form onSubmit={handleAiSubmit} noValidate className="space-y-4">
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div>
-                          <label className="block text-sm font-semibold text-navy mb-1">First Name *</label>
-                          <input type="text" name="firstName" value={aiData.firstName} onChange={handleAiChange} className={getInputClass('firstName')} />
-                          {errors.firstName && <p className="text-red-500 text-xs mt-1">{errors.firstName}</p>}
-                        </div>
-                        <div>
-                          <label className="block text-sm font-semibold text-navy mb-1">Last Name *</label>
-                          <input type="text" name="lastName" value={aiData.lastName} onChange={handleAiChange} className={getInputClass('lastName')} />
-                          {errors.lastName && <p className="text-red-500 text-xs mt-1">{errors.lastName}</p>}
-                        </div>
-                      </div>
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div>
-                          <label className="block text-sm font-semibold text-navy mb-1">Email *</label>
-                          <input type="email" name="email" value={aiData.email} onChange={handleAiChange} className={getInputClass('email')} />
-                          {errors.email && <p className="text-red-500 text-xs mt-1">{errors.email}</p>}
-                        </div>
-                        <div>
-                          <label className="block text-sm font-semibold text-navy mb-1">Phone *</label>
-                          <input type="tel" name="phone" value={aiData.phone} onChange={handleAiChange} maxLength={14} placeholder="5678251714" className={getInputClass('phone')} />
-                          {errors.phone && <p className="text-red-500 text-xs mt-1">{errors.phone}</p>}
-                        </div>
-                      </div>
-                      <button type="submit" disabled={isSubmitting} className="w-full bg-navy text-white py-4 rounded-lg font-bold hover:bg-navy/90 transition-colors disabled:opacity-50 flex justify-center items-center gap-2">
-                        {isSubmitting ? <span>Starting chat...</span> : <><Bot className="h-5 w-5" /><span>Start Chatting with Elizabeth</span></>}
-                      </button>
-                      <p className="text-xs text-gray-400 text-center">Your info is saved so we can follow up after your chat.</p>
-                    </form>
-                  </>
-                )}
-              </div>
-            )}
-
             {/* TAB 3: CUSTOM QUOTE */}
             {activeView === 'quote' && submitStatus !== 'success' && (
               <form onSubmit={handleQuoteSubmit} noValidate className="space-y-6 animate-fade-in">
