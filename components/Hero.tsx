@@ -24,7 +24,7 @@ export default function Hero() {
             {/* Subheadline */}
             <p className="text-xl text-gray-700 leading-relaxed">
               Rent our stackable bins, pack them at your pace, and we'll pick them up.{' '}
-              Skip the cardboard chaos. <span className="font-semibold text-navy">Join the "Done That" club</span> in Lima, OH.
+              Skip the cardboard chaos. <span className="font-semibold text-navy">Join the "Done That" club</span> in Lima, OH and Surrounding Areas.
             </p>
 
             {/* Key Benefits */}
