@@ -81,22 +81,25 @@ export default function ContactForm() {
       const res = await submitWebhook({ lead_type: 'ai_chat', form_type: 'ask_ai', ...aiData })
       if (res.ok) {
         setAiSubmitted(true)
-        if (typeof window !== 'undefined') {
-          const lc = (window as any).LeadConnector
-          if (lc && lc.ChatWidget) {
-            // Identify the user to bypass GHL's internal lead form
-            lc.ChatWidget.identify({
-              name: `${aiData.firstName} ${aiData.lastName}`,
-              email: aiData.email,
-              phone: aiData.phone
-            })
-            // Unhide the widget container
-            const widgetEl = document.getElementById('leadconnector-chat-widget')
-            if (widgetEl) widgetEl.style.setProperty('display', 'block', 'important')
-            // Open the widget menu (Chat vs Voice selection)
-            lc.ChatWidget.openWidget()
+        // 500ms delay gives the widget time to fully initialize before data handoff
+        setTimeout(() => {
+          if (typeof window !== 'undefined') {
+            const lc = (window as any).LeadConnector
+            if (lc && lc.ChatWidget) {
+              // 1. Push contact data — identifies the user to Elizabeth
+              lc.ChatWidget.identify({
+                name: `${aiData.firstName} ${aiData.lastName}`,
+                email: aiData.email,
+                phone: aiData.phone
+              })
+              // 2. Unhide the widget container
+              const widgetEl = document.getElementById('leadconnector-chat-widget')
+              if (widgetEl) widgetEl.style.setProperty('display', 'block', 'important')
+              // 3. Open the widget menu (Chat vs Voice selection)
+              lc.ChatWidget.openWidget()
+            }
           }
-        }
+        }, 500)
       } else {
         setSubmitStatus('error')
       }
