@@ -62,14 +62,18 @@ export default function RootLayout({
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
           strategy="beforeInteractive"
         />
+      </head>
+      <body>
+        {children}
+        {/* LeadConnector Chat Widget — A2P Compliance: loaded in body for scraper detection */}
         <Script
-          src="https://beta.leadconnectorhq.com/loader.js"
-          data-resources-url="https://beta.leadconnectorhq.com/chat-widget/loader.js"
-          data-widget-id="69f78b8c94d4b148744faceb"
+          src="https://widgets.leadconnectorhq.com/loader.js"
+          data-resources-url="https://widgets.leadconnectorhq.com/chat-widget/loader.js"
+          data-widget-id="69f7f8fa9b1858b5ee9d7e6a"
+          data-source="WEB_USER"
           strategy="afterInteractive"
         />
-      </head>
-      <body>{children}</body>
+      </body>
     </html>
   )
 }
