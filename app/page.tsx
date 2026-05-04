@@ -182,7 +182,7 @@ export default function Home() {
               {/* Commercial & Contact Bridge */}
               <div className="mt-8 pt-8 border-t border-gray-100">
                 <Link href="/commercial-moves" target="_blank" className="flex items-center gap-4 p-4 bg-gray-900 rounded-2xl text-white hover:bg-gray-800 transition-colors">
-                  <div className="p-2 bg-gray-700 rounded-lg text-xl">ð¢</div>
+                  <div className="p-2 bg-gray-700 rounded-lg text-xl">Ã°ÂÂÂ¢</div>
                   <div>
                     <p className="font-bold">Commercial & Office Relocations</p>
                     <p className="text-sm text-gray-400">Specialized logistics for local businesses.</p>
@@ -205,7 +205,8 @@ export default function Home() {
       <PackageSelector />
       <Features />
       <FAQ />
-      <ContactForm />
+      {/* A2P COMPLIANCE — TEMP: ContactForm hidden to prevent multiple opt-in flag during TCR scraper review. Re-enable after A2P/10DLC approval. */}
+      {/* <ContactForm /> */}
       <Footer />
     </main>
   )
