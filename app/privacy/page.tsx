@@ -2,7 +2,7 @@ import Header from '@/components/Header'
 import Footer from '@/components/Footer'
 
 export const metadata = {
-  title: 'Privacy Policy - Bin There Totes',
+  title: 'Privacy Policy - Sheets Holdings DBA Bin There Totes',
   description: 'Privacy policy for Bin There Totes moving bin rentals',
 }
 
@@ -27,7 +27,7 @@ export default function PrivacyPolicy() {
             <section className="mb-8">
               <h2 className="text-2xl font-display font-bold text-navy mb-4">Introduction</h2>
               <p className="text-gray-700 leading-relaxed mb-4">
-                Bin There Totes ("we," "our," or "us") is committed to protecting your privacy. 
+                Sheets Holdings DBA Bin There Totes ("we," "our," or "us") is committed to protecting your privacy. 
                 This Privacy Policy explains how we collect, use, disclose, and safeguard your 
                 information when you visit our website or use our services.
               </p>
@@ -125,6 +125,16 @@ export default function PrivacyPolicy() {
             </section>
 
             <section className="mb-8">
+              <h2 className="text-2xl font-display font-bold text-navy mb-4">SMS and Text Messaging</h2>
+              <p className="text-gray-700 leading-relaxed mb-4">
+                By opting in to receive text messages from Sheets Holdings DBA Bin There Totes, you agree to receive 
+                customer care and/or promotional messages. Mobile information will not be shared, sold, or conveyed 
+                to third parties or affiliates for marketing or promotional purposes. Text <strong>HELP</strong> for 
+                help and <strong>STOP</strong> to unsubscribe. Message and data rates may apply.
+              </p>
+            </section>
+
+            <section className="mb-8">
               <h2 className="text-2xl font-display font-bold text-navy mb-4">Changes to This Policy</h2>
               <p className="text-gray-700 leading-relaxed mb-4">
                 We may update this Privacy Policy from time to time. We will notify you of any changes 
@@ -138,7 +148,7 @@ export default function PrivacyPolicy() {
                 If you have questions about this Privacy Policy or our privacy practices, please contact us:
               </p>
               <div className="bg-cool-50 p-6 rounded-lg">
-                <p className="text-gray-700 mb-2"><strong>Bin There Totes</strong></p>
+                <p className="text-gray-700 mb-2"><strong>Sheets Holdings DBA Bin There Totes</strong></p>
                 <p className="text-gray-700 mb-2">Lima, OH 45801</p>
                 <p className="text-gray-700 mb-2">Phone: <a href="tel:+14195551234" className="text-orange hover:underline">(419) 555-1234</a></p>
                 <p className="text-gray-700">Email: <a href="mailto:privacy@bintheretotes.com" className="text-orange hover:underline">privacy@bintheretotes.com</a></p>
