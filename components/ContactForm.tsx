@@ -208,7 +208,7 @@ export default function ContactForm() {
                 </div>
                 <div>
                   <h3 className="font-semibold text-navy mb-1">Phone</h3>
-                  <a href="tel:+15678251714" className="text-gray-600 hover:text-orange transition-colors">(567) 825-1714</a>
+                  <a href="tel:+15678251714" className="text-gray-600 hover:text-orange transition-colors">(567) 320-0620</a>
                 </div>
               </div>
               <div className="flex items-start space-x-4">

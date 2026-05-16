@@ -36,7 +36,7 @@ export default function Header() {
             </a>
             <a href="tel:+15678251714" className="flex items-center space-x-2 text-orange hover:text-orange-dark transition-colors font-semibold">
               <Phone className="h-4 w-4" />
-              <span>(567) 825-1714</span>
+              <span>(567) 320-0620</span>
             </a>
             <a href="/#contact" className="btn-primary">
               Book Now
@@ -69,7 +69,7 @@ export default function Header() {
             </a>
             <a href="tel:+15678251714" className="flex items-center space-x-2 text-orange font-semibold">
               <Phone className="h-4 w-4" />
-              <span>(567) 825-1714</span>
+              <span>(567) 320-0620</span>
             </a>
             <a href="/#contact" className="btn-primary block text-center">
               Book Now

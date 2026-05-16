@@ -103,7 +103,7 @@ export default function FAQ() {
               href="tel:+15678251714"
               className="bg-orange hover:bg-orange-dark text-white font-semibold px-8 py-3 rounded-lg transition-all duration-300 transform hover:scale-105"
             >
-              Call (567) 825-1714
+              Call (567) 320-0620
             </a>
             <a
               href="#contact"
