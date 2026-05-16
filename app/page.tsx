@@ -24,13 +24,11 @@ const mapContainerStyle = {
   borderRadius: '1.5rem'
 }
 
-// Center map between the hubs
 const center = {
   lat: 40.7500,
   lng: -84.1500
 }
 
-// Custom Muted Silver Map Style
 const silverMapStyle = [
   { elementType: "geometry", stylers: [{ color: "#f5f5f5" }] },
   { elementType: "labels.icon", stylers: [{ visibility: "on" }] },
@@ -57,7 +55,7 @@ export default function Home() {
 
   const { isLoaded } = useJsApiLoader({
     id: 'google-map-script',
-    googleMapsApiKey: "AIzaSyBibJqdJLOMmS0sOWsHqSKT4jfbn2qp9G0" 
+    googleMapsApiKey: "AIzaSyBibJqdJLOMmS0sOWsHqSKT4jfbn2qp9G0"
   })
 
   const onLoad = useCallback(function callback(map: any) {
@@ -77,7 +75,6 @@ export default function Home() {
       <section id="areas" className="bg-white py-16 border-y border-gray-100">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           
-          {/* Section Header & Allen County Branding */}
           <div className="flex flex-col lg:flex-row lg:items-end lg:justify-between mb-12 gap-6">
             <div className="max-w-2xl">
               <h2 className="text-3xl font-extrabold text-gray-900 sm:text-4xl">Serving Allen County & The I-75 Corridor</h2>
@@ -100,7 +97,6 @@ export default function Home() {
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
             
-            {/* Left: Google Maps Component */}
             <div className="relative bg-gray-100 rounded-3xl border border-gray-200 p-2 shadow-inner h-[500px] lg:h-auto lg:aspect-square overflow-hidden">
               {isLoaded ? (
                 <GoogleMap
@@ -153,7 +149,6 @@ export default function Home() {
               )}
             </div>
 
-            {/* Right: Quick Links & USPs (Updated to 2x2 Grid) */}
             <div className="flex flex-col justify-between h-full">
               <div>
                 <h3 className="text-xl font-bold text-gray-900 mb-6">Explore Our Local Hubs</h3>
@@ -165,7 +160,6 @@ export default function Home() {
                       target="_blank"
                       className="flex flex-col items-center justify-center p-6 bg-gray-50 rounded-2xl border border-gray-200 hover:border-orange-500 hover:bg-orange-50 transition-all group text-center"
                     >
-                      {/* Isometric Box SVG Icon */}
                       <div className="w-12 h-12 bg-white rounded-xl flex items-center justify-center shadow-sm text-orange-500 mb-3 group-hover:scale-110 transition-transform">
                         <svg className="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                           <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
@@ -179,10 +173,9 @@ export default function Home() {
                 </div>
               </div>
 
-              {/* Commercial & Contact Bridge */}
               <div className="mt-8 pt-8 border-t border-gray-100">
                 <Link href="/commercial-moves" target="_blank" className="flex items-center gap-4 p-4 bg-gray-900 rounded-2xl text-white hover:bg-gray-800 transition-colors">
-                  <div className="p-2 bg-gray-700 rounded-lg text-xl">Ã°ÂÂÂ¢</div>
+                  <div className="p-2 bg-gray-700 rounded-lg text-xl">Ã°ÂÂÂ¢</div>
                   <div>
                     <p className="font-bold">Commercial & Office Relocations</p>
                     <p className="text-sm text-gray-400">Specialized logistics for local businesses.</p>
@@ -205,8 +198,7 @@ export default function Home() {
       <PackageSelector />
       <Features />
       <FAQ />
-      {/* A2P COMPLIANCE — TEMP: ContactForm hidden to prevent multiple opt-in flag during TCR scraper review. Re-enable after A2P/10DLC approval. */}
-      {/* <ContactForm /> */}
+      <ContactForm />
       <Footer />
     </main>
   )
