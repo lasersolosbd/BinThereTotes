@@ -1,13 +1,18 @@
 'use client'
 
 import { useState, useEffect, useRef, useCallback } from 'react'
-import { Phone, Calendar, MessageSquare, Send, CheckCircle, MapPin, Mail, Mic, PhoneOff, StopCircle } from 'lucide-react'
+import { Phone, Calendar, MessageSquare, Send, CheckCircle, MapPin, Mail, Mic, PhoneOff, StopCircle, AlertTriangle } from 'lucide-react'
 import { RetellWebClient } from 'retell-client-js-sdk'
 
 const retellWebClient = new RetellWebClient()
 
 const GHL_WEBHOOK_URL = 'https://services.leadconnectorhq.com/hooks/nQv4T6cT4sx1HYZZVpsn/webhook-trigger/ddcc6997-7fad-4cee-b2de-653cd224e260'
-const IDLE_TIMEOUT_MS = 90_000 // 90 seconds
+
+// Stage 1: 0–120s  → normal operation
+// Stage 2: 120–180s → warning banner with countdown
+// Stage 3: 180s     → auto-close
+const WARN_AT_SECONDS = 120
+const CLOSE_AT_SECONDS = 180
 
 type ViewState = 'request' | 'quote' | 'voice' | 'chat'
 
@@ -28,7 +33,7 @@ interface ChatMessage {
   content: string
 }
 
-// ── Helpers ──────────────────────────────────────────────────────────────────
+// ── Helpers ───────────────────────────────────────────────────────────────────
 
 function buildTranscript(messages: ChatMessage[]): string {
   return messages
@@ -42,7 +47,7 @@ function buildSummary(messages: ChatMessage[]): string {
   return `User asked about: ${userLines.slice(0, 3).join(' | ')}${userLines.length > 3 ? ' …and more.' : '.'}`
 }
 
-// ── Sub-components (outside ContactForm to prevent remount on re-render) ─────
+// ── Sub-components (defined outside ContactForm to prevent remount on re-render) ──
 
 interface SharedFieldBlockProps {
   shared: SharedFields
@@ -164,12 +169,16 @@ export default function ContactForm() {
   const [isSending, setIsSending] = useState(false)
   const [chatClosedReason, setChatClosedReason] = useState<string | null>(null)
 
+  // 3-stage idle timer state
+  const [idleSeconds, setIdleSeconds] = useState(0)
+  const [showIdleWarning, setShowIdleWarning] = useState(false)
+
   // Refs
   const chatScrollRef = useRef<HTMLDivElement>(null)
   const chatInputRef = useRef<HTMLInputElement>(null)
-  const idleTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const idleIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null)
 
-  // Keep stable refs to current values for use in callbacks/event listeners
+  // Stable refs for use inside event listeners and callbacks
   const sharedRef = useRef(shared)
   const chatMessagesRef = useRef(chatMessages)
   const chatIdRef = useRef(chatId)
@@ -178,7 +187,7 @@ export default function ContactForm() {
   useEffect(() => { chatMessagesRef.current = chatMessages }, [chatMessages])
   useEffect(() => { chatIdRef.current = chatId }, [chatId])
 
-  // ── Retell voice event listeners ──
+  // ── Retell voice listeners ──
   useEffect(() => {
     retellWebClient.on('call_started', () => { setIsCalling(true); setVoiceStatus('active') })
     retellWebClient.on('call_ended', () => { setIsCalling(false); setVoiceStatus('idle') })
@@ -194,28 +203,26 @@ export default function ContactForm() {
     }
   }, [])
 
-  // ── Scroll chat container (not the page) on new messages ──
+  // ── Scroll chat box (not the page) on new messages ──
   useEffect(() => {
     if (chatScrollRef.current) {
       chatScrollRef.current.scrollTop = chatScrollRef.current.scrollHeight
     }
-  }, [chatMessages])
+  }, [chatMessages, isSending])
 
-  // ── Re-focus chat input after send ──
+  // ── Restore input focus after send completes ──
   useEffect(() => {
     if (!isSending && chatId && chatInputRef.current) {
       chatInputRef.current.focus()
     }
   }, [isSending, chatId])
 
-  // ── Webhook payload sender (used by manual end, idle timer, and pagehide) ──
+  // ── Webhook summary sender ──
   const sendChatSummaryWebhook = useCallback((
     userData: SharedFields,
     messages: ChatMessage[],
     keepalive = false
   ) => {
-    const transcript = buildTranscript(messages)
-    const summary = buildSummary(messages)
     const payload = JSON.stringify({
       lead_type: 'ai_chat',
       form_type: 'chat_summary',
@@ -223,8 +230,8 @@ export default function ContactForm() {
       lastName: userData.lastName,
       email: userData.email,
       phone: userData.phone,
-      transcript,
-      summary,
+      transcript: buildTranscript(messages),
+      summary: buildSummary(messages),
       submitted_at: new Date().toISOString(),
     })
     return fetch(GHL_WEBHOOK_URL, {
@@ -235,9 +242,19 @@ export default function ContactForm() {
     })
   }, [])
 
-  // ── Clean shutdown (manual End Chat or idle timeout) ──
+  // ── Stop the idle interval ──
+  const stopIdleTimer = useCallback(() => {
+    if (idleIntervalRef.current) {
+      clearInterval(idleIntervalRef.current)
+      idleIntervalRef.current = null
+    }
+    setIdleSeconds(0)
+    setShowIdleWarning(false)
+  }, [])
+
+  // ── Clean shutdown (manual or idle stage 3) ──
   const endChatSession = useCallback(async (reason: 'manual' | 'idle') => {
-    clearIdleTimer()
+    stopIdleTimer()
     const messages = chatMessagesRef.current
     const userData = sharedRef.current
     if (messages.length > 0) {
@@ -246,46 +263,53 @@ export default function ContactForm() {
     setChatId(null)
     setChatMessages([])
     setChatInput('')
+    setShowIdleWarning(false)
+    setIdleSeconds(0)
     setChatClosedReason(
       reason === 'idle'
         ? 'Chat closed due to inactivity. Start a new chat anytime.'
         : 'Chat ended. Thanks for chatting with us!'
     )
-  }, [sendChatSummaryWebhook])
+  }, [stopIdleTimer, sendChatSummaryWebhook])
 
-  // ── Idle timer management ──
-  const clearIdleTimer = () => {
-    if (idleTimerRef.current) {
-      clearTimeout(idleTimerRef.current)
-      idleTimerRef.current = null
-    }
-  }
-
+  // ── Reset idle counter (called on every sent/received message) ──
   const resetIdleTimer = useCallback(() => {
-    clearIdleTimer()
-    idleTimerRef.current = setTimeout(() => {
-      endChatSession('idle')
-    }, IDLE_TIMEOUT_MS)
-  }, [endChatSession])
+    setIdleSeconds(0)
+    setShowIdleWarning(false)
+  }, [])
 
-  // Start idle timer when chat session begins
+  // ── Start/stop the 1-second idle interval when chatId changes ──
   useEffect(() => {
-    if (chatId) {
-      resetIdleTimer()
-    } else {
-      clearIdleTimer()
+    if (!chatId) {
+      stopIdleTimer()
+      return
     }
-    return () => clearIdleTimer()
-  }, [chatId, resetIdleTimer])
+    // Start a 1-second tick
+    idleIntervalRef.current = setInterval(() => {
+      setIdleSeconds(prev => {
+        const next = prev + 1
+        if (next >= CLOSE_AT_SECONDS) {
+          // Stage 3 — trigger shutdown asynchronously to avoid setState-in-render
+          setTimeout(() => endChatSession('idle'), 0)
+          return prev
+        }
+        if (next >= WARN_AT_SECONDS) {
+          setShowIdleWarning(true)
+        }
+        return next
+      })
+    }, 1000)
 
-  // ── Tab close / page hide beacon ──
+    return () => stopIdleTimer()
+  }, [chatId, stopIdleTimer, endChatSession])
+
+  // ── Tab close / pagehide beacon ──
   useEffect(() => {
     const handlePageHide = () => {
       const messages = chatMessagesRef.current
-      const userData = sharedRef.current
       const activeChatId = chatIdRef.current
       if (!activeChatId || messages.length === 0) return
-      // Use sendBeacon for guaranteed delivery on page unload
+      const userData = sharedRef.current
       const payload = JSON.stringify({
         lead_type: 'ai_chat',
         form_type: 'chat_summary',
@@ -298,10 +322,8 @@ export default function ContactForm() {
         submitted_at: new Date().toISOString(),
       })
       if (navigator.sendBeacon) {
-        const blob = new Blob([payload], { type: 'application/json' })
-        navigator.sendBeacon(GHL_WEBHOOK_URL, blob)
+        navigator.sendBeacon(GHL_WEBHOOK_URL, new Blob([payload], { type: 'application/json' }))
       } else {
-        // Fallback for browsers without sendBeacon
         fetch(GHL_WEBHOOK_URL, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -475,11 +497,11 @@ export default function ContactForm() {
       if (!res.ok) throw new Error('Reply failed')
       const reply = data.reply?.content || 'Sorry, something went wrong. Please try again.'
       setChatMessages(p => [...p, { role: 'agent', content: reply }])
+      resetIdleTimer() // also reset on agent reply
     } catch {
       setChatMessages(p => [...p, { role: 'agent', content: 'Sorry, something went wrong. Please try again.' }])
     } finally {
       setIsSending(false)
-      // Focus is restored by the useEffect watching isSending
     }
   }
 
@@ -488,7 +510,7 @@ export default function ContactForm() {
   }
 
   const handleReset = () => {
-    clearIdleTimer()
+    stopIdleTimer()
     setChatId(null)
     setChatMessages([])
     setChatInput('')
@@ -503,6 +525,9 @@ export default function ContactForm() {
     { id: 'voice',   topLabel: 'Talk',     bottomLabel: 'to AI',     icon: <Mic className="h-5 w-5" /> },
     { id: 'chat',    topLabel: 'Chat',     bottomLabel: 'with AI',   icon: <Send className="h-5 w-5" /> },
   ]
+
+  // Countdown seconds remaining in warning stage
+  const warningCountdown = CLOSE_AT_SECONDS - idleSeconds
 
   return (
     <section id="contact" className="py-20 bg-cool-50">
@@ -789,13 +814,31 @@ export default function ContactForm() {
             )}
 
             {activeView === 'chat' && (
-              <div className="space-y-6">
+              <div className="space-y-4">
                 {chatId ? (
-                  <div>
-                    {/* Chat scroll box — ref on the container, not a sentinel div */}
+                  <div className="space-y-3">
+
+                    {/* ── Stage 2: Idle warning banner ── */}
+                    {showIdleWarning && (
+                      <div className="flex items-center justify-between gap-3 bg-amber-50 border border-amber-200 rounded-xl px-4 py-3">
+                        <div className="flex items-center gap-2 text-amber-800 text-xs font-semibold">
+                          <AlertTriangle className="h-4 w-4 flex-shrink-0 text-amber-500" />
+                          Are you still there? This chat will close in{' '}
+                          <span className="font-bold text-amber-900">{warningCountdown}s</span>.
+                        </div>
+                        <button
+                          onClick={resetIdleTimer}
+                          className="flex-shrink-0 text-xs font-bold bg-amber-500 hover:bg-amber-600 text-white px-3 py-1.5 rounded-lg transition-colors"
+                        >
+                          Keep Chatting
+                        </button>
+                      </div>
+                    )}
+
+                    {/* ── Chat scroll box ── */}
                     <div
                       ref={chatScrollRef}
-                      className="h-72 overflow-y-auto mb-3 space-y-3 pr-1 border border-gray-100 rounded-xl p-4 bg-gray-50"
+                      className="h-64 overflow-y-auto space-y-3 pr-1 border border-gray-100 rounded-xl p-4 bg-gray-50"
                     >
                       {chatMessages.map((msg, i) => (
                         <div key={i} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
@@ -817,8 +860,8 @@ export default function ContactForm() {
                       )}
                     </div>
 
-                    {/* Input row + End Chat button */}
-                    <div className="flex gap-2 mb-2">
+                    {/* ── Input row ── */}
+                    <div className="flex gap-2">
                       <input
                         ref={chatInputRef}
                         type="text"
@@ -838,7 +881,7 @@ export default function ContactForm() {
                       </button>
                     </div>
 
-                    {/* End Chat + reset row */}
+                    {/* ── End Chat + reset row ── */}
                     <div className="flex items-center justify-between">
                       <button
                         onClick={() => endChatSession('manual')}
@@ -852,8 +895,8 @@ export default function ContactForm() {
                     </div>
                   </div>
                 ) : (
-                  <>
-                    {/* Chat closed message (idle timeout or manual end) */}
+                  <div className="space-y-6">
+                    {/* Closed reason banner */}
                     {chatClosedReason && (
                       <div className="bg-gray-50 border border-gray-200 rounded-lg p-4 text-sm text-gray-600 text-center">
                         {chatClosedReason}
@@ -875,7 +918,7 @@ export default function ContactForm() {
                       className="w-full bg-orange text-white py-4 rounded-lg font-bold hover:bg-orange/90 transition-colors flex justify-center items-center gap-2 text-sm uppercase tracking-wider">
                       <MessageSquare className="h-5 w-5" /> Start Chat
                     </button>
-                  </>
+                  </div>
                 )}
               </div>
             )}
