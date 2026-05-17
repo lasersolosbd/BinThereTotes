@@ -5,12 +5,10 @@ import { useState, useEffect, useRef } from 'react'
 import { Phone, Calendar, MessageSquare, Send, CheckCircle, MapPin, Mail, Mic, PhoneOff } from 'lucide-react'
 import { RetellWebClient } from 'retell-client-js-sdk'
 
-// Initialize outside render loop — class methods stay permanently bound
 const retellWebClient = new RetellWebClient()
 
 type ViewState = 'request' | 'quote' | 'voice' | 'chat'
 
-// ── Shared lead fields (lifted to component level for cross-tab auto-fill) ──
 interface SharedFields {
   firstName: string
   lastName: string
@@ -28,47 +26,38 @@ interface ChatMessage {
   content: string
 }
 
-// ── Main Component ────────────────────────────────────────────────────────────
 export default function ContactForm() {
   const [activeView, setActiveView] = useState<ViewState>('request')
 
-  // ── SHARED FIELDS (auto-fill across all tabs) ─────────────────────────────
   const [shared, setShared] = useState<SharedFields>({
     firstName: '', lastName: '', email: '', phone: '',
   })
 
-  // ── REQUEST TAB STATE ─────────────────────────────────────────────────────
   const [requestData, setRequestData] = useState({
     currentAddress: '', currentZip: '', movingToAddress: '', movingToZip: '',
     package: '3bed', dropOffDate: '', pickUpDate: '', agreeSMS: false, agreeVoice: false,
   })
 
-  // ── QUOTE TAB STATE ───────────────────────────────────────────────────────
   const [quoteData, setQuoteData] = useState({
     currentAddress: '', currentZip: '', movingToAddress: '', movingToZip: '',
     questions: '', agreeSMS: false, agreeVoice: false,
   })
 
-  // ── AI TABS SHARED STATE ──────────────────────────────────────────────────
   const [aiData, setAiData] = useState<AiTabData>({ agreeSMS: false, agreePromo: false })
 
-  // ── FORM STATUS ───────────────────────────────────────────────────────────
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [submitStatus, setSubmitStatus] = useState<'idle' | 'success' | 'error'>('idle')
   const [errors, setErrors] = useState<Record<string, string>>({})
 
-  // ── VOICE STATE ───────────────────────────────────────────────────────────
   const [isCalling, setIsCalling] = useState(false)
   const [voiceStatus, setVoiceStatus] = useState<'idle' | 'connecting' | 'active' | 'error'>('idle')
 
-  // ── CHAT STATE ────────────────────────────────────────────────────────────
   const [chatId, setChatId] = useState<string | null>(null)
   const [chatMessages, setChatMessages] = useState<ChatMessage[]>([])
   const [chatInput, setChatInput] = useState('')
   const [isSending, setIsSending] = useState(false)
   const chatEndRef = useRef<HTMLDivElement>(null)
 
-  // ── Retell event listeners ────────────────────────────────────────────────
   useEffect(() => {
     retellWebClient.on('call_started', () => { setIsCalling(true); setVoiceStatus('active') })
     retellWebClient.on('call_ended', () => { setIsCalling(false); setVoiceStatus('idle') })
@@ -84,12 +73,10 @@ export default function ContactForm() {
     }
   }, [])
 
-  // Auto-scroll chat
   useEffect(() => {
     chatEndRef.current?.scrollIntoView({ behavior: 'smooth' })
   }, [chatMessages])
 
-  // ── HELPERS ───────────────────────────────────────────────────────────────
   const getMinPickUpDate = (dropDateString: string) => {
     if (!dropDateString) return new Date().toISOString().split('T')[0]
     const d = new Date(dropDateString + 'T12:00:00')
@@ -116,7 +103,6 @@ export default function ContactForm() {
     setShared(p => ({ ...p, [name]: value }))
   }
 
-  // ── WEBHOOK ───────────────────────────────────────────────────────────────
   const submitWebhook = (payload: any) =>
     fetch('https://services.leadconnectorhq.com/hooks/nQv4T6cT4sx1HYZZVpsn/webhook-trigger/ddcc6997-7fad-4cee-b2de-653cd224e260', {
       method: 'POST',
@@ -124,7 +110,6 @@ export default function ContactForm() {
       body: JSON.stringify({ ...payload, submitted_at: new Date().toISOString() }),
     })
 
-  // ── VALIDATION ────────────────────────────────────────────────────────────
   const validateShared = () => {
     const e: Record<string, string> = {}
     if (!shared.firstName.trim()) e.firstName = 'Please fill this out.'
@@ -160,7 +145,6 @@ export default function ContactForm() {
     return e
   }
 
-  // ── SUBMITS ───────────────────────────────────────────────────────────────
   const handleRequestSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     const errs = validateRequest()
@@ -185,7 +169,6 @@ export default function ContactForm() {
     finally { setIsSubmitting(false) }
   }
 
-  // ── VOICE ─────────────────────────────────────────────────────────────────
   const handleStartVoice = async () => {
     const errs = validateAi()
     if (Object.keys(errs).length > 0) { setErrors(errs); return }
@@ -212,7 +195,6 @@ export default function ContactForm() {
 
   const handleEndCall = () => retellWebClient.stopCall()
 
-  // ── CHAT ──────────────────────────────────────────────────────────────────
   const handleStartChat = async () => {
     const errs = validateAi()
     if (Object.keys(errs).length > 0) { setErrors(errs); return }
@@ -261,7 +243,6 @@ export default function ContactForm() {
     setVoiceStatus('idle'); setIsCalling(false)
   }
 
-  // ── SHARED FIELD BLOCK (same across all 4 tabs, reads/writes shared state) ─
   const SharedFieldBlock = () => (
     <div className="space-y-4">
       <div className="grid grid-cols-2 gap-4">
@@ -291,8 +272,6 @@ export default function ContactForm() {
     </div>
   )
 
-  // ── A2P CHECKBOX BLOCK (identical language, reused on every tab) ───────────
-  // Note: each tab passes its own checked state and onChange to keep IDs unique
   const A2PBlock = ({
     smsId, promoId, smsChecked, promoChecked, onSmsChange, onPromoChange,
   }: {
@@ -332,7 +311,6 @@ export default function ContactForm() {
     </div>
   )
 
-  // ── TAB CONFIG ────────────────────────────────────────────────────────────
   const tabs: { id: ViewState; label: string; icon: React.ReactNode }[] = [
     { id: 'request', label: 'Reserve',  icon: <Calendar className="h-5 w-5" /> },
     { id: 'quote',   label: 'Custom',   icon: <MessageSquare className="h-5 w-5" /> },
@@ -345,7 +323,6 @@ export default function ContactForm() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
 
-          {/* ── LEFT COLUMN ─────────────────────────────────────────────── */}
           <div className="lg:col-span-4">
             <h2 className="text-4xl font-display font-bold text-navy mb-6">
               Ready to Join the "Done That" Club?
@@ -370,10 +347,8 @@ export default function ContactForm() {
             </div>
           </div>
 
-          {/* ── RIGHT COLUMN ────────────────────────────────────────────── */}
           <div className="lg:col-span-8 bg-white rounded-2xl shadow-xl overflow-hidden p-6 md:p-10">
 
-            {/* 2×2 TAB NAV — works on all screen sizes */}
             <div className="grid grid-cols-2 gap-3 mb-8">
               {tabs.map(tab => (
                 <button key={tab.id} onClick={() => changeView(tab.id)}
@@ -389,7 +364,6 @@ export default function ContactForm() {
               ))}
             </div>
 
-            {/* ── SUCCESS STATE ────────────────────────────────────────── */}
             {submitStatus === 'success' && (
               <div className="text-center py-10">
                 <CheckCircle className="h-16 w-16 text-green-500 mx-auto mb-4" />
@@ -405,11 +379,9 @@ export default function ContactForm() {
               </div>
             )}
 
-            {/* ── TAB: RESERVE ─────────────────────────────────────────── */}
             {activeView === 'request' && submitStatus !== 'success' && (
               <form onSubmit={handleRequestSubmit} noValidate className="space-y-6">
                 <SharedFieldBlock />
-
                 <div className="pt-4 border-t border-gray-100">
                   <h4 className="text-sm font-bold text-navy uppercase tracking-wider mb-4">Location Details</h4>
                   <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-4">
@@ -446,7 +418,6 @@ export default function ContactForm() {
                     </div>
                   </div>
                 </div>
-
                 <div className="pt-4 border-t border-gray-100">
                   <h4 className="text-sm font-bold text-navy uppercase tracking-wider mb-4">Rental Details</h4>
                   <label className="block text-sm font-semibold text-navy mb-1">Select Package *</label>
@@ -479,7 +450,6 @@ export default function ContactForm() {
                     </div>
                   </div>
                 </div>
-
                 <A2PBlock
                   smsId="req-sms" promoId="req-promo"
                   smsChecked={requestData.agreeSMS} promoChecked={requestData.agreeVoice}
@@ -494,7 +464,6 @@ export default function ContactForm() {
               </form>
             )}
 
-            {/* ── TAB: CUSTOM QUOTE ─────────────────────────────────────── */}
             {activeView === 'quote' && submitStatus !== 'success' && (
               <form onSubmit={handleQuoteSubmit} noValidate className="space-y-6">
                 <SharedFieldBlock />
@@ -556,7 +525,6 @@ export default function ContactForm() {
               </form>
             )}
 
-            {/* ── TAB: TALK TO AI (VOICE) ───────────────────────────────── */}
             {activeView === 'voice' && (
               <div className="space-y-6">
                 {isCalling ? (
@@ -598,7 +566,6 @@ export default function ContactForm() {
               </div>
             )}
 
-            {/* ── TAB: CHAT WITH AI ─────────────────────────────────────── */}
             {activeView === 'chat' && (
               <div className="space-y-6">
                 {chatId ? (
