@@ -1,8 +1,8 @@
 import { NextResponse } from 'next/server'
 
 const RETELL_API_KEY = process.env.RETELL_API_KEY
-const RETELL_VOICE_AGENT_ID = process.env.RETELL_VOICE_AGENT_ID ?? 'agent_3132771d0f60fcd4dd28b7da7f'
-const RETELL_CHAT_AGENT_ID  = process.env.RETELL_CHAT_AGENT_ID  ?? 'agent_a52367df32554a850bd34e8a44'
+const RETELL_VOICE_AGENT_ID = process.env.RETELL_VOICE_AGENT_ID ?? 'agent_01f72643f56ef16629f99c0b7f'
+const RETELL_CHAT_AGENT_ID  = process.env.RETELL_CHAT_AGENT_ID  ?? 'agent_af8ede01698b483f7376e8be2f'
 
 export async function POST(req: Request) {
   try {
