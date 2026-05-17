@@ -1,10 +1,13 @@
 'use client'
 
-import { useState, useEffect, useRef } from 'react'
-import { Phone, Calendar, MessageSquare, Send, CheckCircle, MapPin, Mail, Mic, PhoneOff } from 'lucide-react'
+import { useState, useEffect, useRef, useCallback } from 'react'
+import { Phone, Calendar, MessageSquare, Send, CheckCircle, MapPin, Mail, Mic, PhoneOff, StopCircle } from 'lucide-react'
 import { RetellWebClient } from 'retell-client-js-sdk'
 
 const retellWebClient = new RetellWebClient()
+
+const GHL_WEBHOOK_URL = 'https://services.leadconnectorhq.com/hooks/nQv4T6cT4sx1HYZZVpsn/webhook-trigger/ddcc6997-7fad-4cee-b2de-653cd224e260'
+const IDLE_TIMEOUT_MS = 90_000 // 90 seconds
 
 type ViewState = 'request' | 'quote' | 'voice' | 'chat'
 
@@ -25,7 +28,21 @@ interface ChatMessage {
   content: string
 }
 
-// ── Moved outside ContactForm so React never remounts on parent re-render ──
+// ── Helpers ──────────────────────────────────────────────────────────────────
+
+function buildTranscript(messages: ChatMessage[]): string {
+  return messages
+    .map(m => `${m.role === 'user' ? 'User' : 'Agent'}: ${m.content}`)
+    .join('\n')
+}
+
+function buildSummary(messages: ChatMessage[]): string {
+  const userLines = messages.filter(m => m.role === 'user').map(m => m.content)
+  if (userLines.length === 0) return 'No user messages recorded.'
+  return `User asked about: ${userLines.slice(0, 3).join(' | ')}${userLines.length > 3 ? ' …and more.' : '.'}`
+}
+
+// ── Sub-components (outside ContactForm to prevent remount on re-render) ─────
 
 interface SharedFieldBlockProps {
   shared: SharedFields
@@ -111,7 +128,7 @@ function A2PBlock({ smsId, promoId, smsChecked, promoChecked, smsError, promoErr
   )
 }
 
-// ── Main component ──
+// ── Main component ────────────────────────────────────────────────────────────
 
 export default function ContactForm() {
   const [activeView, setActiveView] = useState<ViewState>('request')
@@ -131,7 +148,6 @@ export default function ContactForm() {
     questions: '', agreeSMS: false, agreeVoice: false,
   })
 
-  // A2P checkboxes for voice and chat tabs — reset independently, not shared
   const [voiceAiData, setVoiceAiData] = useState<AiTabData>({ agreeSMS: false, agreePromo: false })
   const [chatAiData, setChatAiData] = useState<AiTabData>({ agreeSMS: false, agreePromo: false })
 
@@ -146,10 +162,23 @@ export default function ContactForm() {
   const [chatMessages, setChatMessages] = useState<ChatMessage[]>([])
   const [chatInput, setChatInput] = useState('')
   const [isSending, setIsSending] = useState(false)
+  const [chatClosedReason, setChatClosedReason] = useState<string | null>(null)
 
-  // Ref for the scrollable chat container — not a sentinel div — so we scroll the box, not the page
+  // Refs
   const chatScrollRef = useRef<HTMLDivElement>(null)
+  const chatInputRef = useRef<HTMLInputElement>(null)
+  const idleTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
+  // Keep stable refs to current values for use in callbacks/event listeners
+  const sharedRef = useRef(shared)
+  const chatMessagesRef = useRef(chatMessages)
+  const chatIdRef = useRef(chatId)
+
+  useEffect(() => { sharedRef.current = shared }, [shared])
+  useEffect(() => { chatMessagesRef.current = chatMessages }, [chatMessages])
+  useEffect(() => { chatIdRef.current = chatId }, [chatId])
+
+  // ── Retell voice event listeners ──
   useEffect(() => {
     retellWebClient.on('call_started', () => { setIsCalling(true); setVoiceStatus('active') })
     retellWebClient.on('call_ended', () => { setIsCalling(false); setVoiceStatus('idle') })
@@ -165,13 +194,127 @@ export default function ContactForm() {
     }
   }, [])
 
-  // Scroll the chat container to the bottom on new messages — scoped to the box, not the page
+  // ── Scroll chat container (not the page) on new messages ──
   useEffect(() => {
     if (chatScrollRef.current) {
       chatScrollRef.current.scrollTop = chatScrollRef.current.scrollHeight
     }
   }, [chatMessages])
 
+  // ── Re-focus chat input after send ──
+  useEffect(() => {
+    if (!isSending && chatId && chatInputRef.current) {
+      chatInputRef.current.focus()
+    }
+  }, [isSending, chatId])
+
+  // ── Webhook payload sender (used by manual end, idle timer, and pagehide) ──
+  const sendChatSummaryWebhook = useCallback((
+    userData: SharedFields,
+    messages: ChatMessage[],
+    keepalive = false
+  ) => {
+    const transcript = buildTranscript(messages)
+    const summary = buildSummary(messages)
+    const payload = JSON.stringify({
+      lead_type: 'ai_chat',
+      form_type: 'chat_summary',
+      firstName: userData.firstName,
+      lastName: userData.lastName,
+      email: userData.email,
+      phone: userData.phone,
+      transcript,
+      summary,
+      submitted_at: new Date().toISOString(),
+    })
+    return fetch(GHL_WEBHOOK_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: payload,
+      keepalive,
+    })
+  }, [])
+
+  // ── Clean shutdown (manual End Chat or idle timeout) ──
+  const endChatSession = useCallback(async (reason: 'manual' | 'idle') => {
+    clearIdleTimer()
+    const messages = chatMessagesRef.current
+    const userData = sharedRef.current
+    if (messages.length > 0) {
+      try { await sendChatSummaryWebhook(userData, messages) } catch { /* best effort */ }
+    }
+    setChatId(null)
+    setChatMessages([])
+    setChatInput('')
+    setChatClosedReason(
+      reason === 'idle'
+        ? 'Chat closed due to inactivity. Start a new chat anytime.'
+        : 'Chat ended. Thanks for chatting with us!'
+    )
+  }, [sendChatSummaryWebhook])
+
+  // ── Idle timer management ──
+  const clearIdleTimer = () => {
+    if (idleTimerRef.current) {
+      clearTimeout(idleTimerRef.current)
+      idleTimerRef.current = null
+    }
+  }
+
+  const resetIdleTimer = useCallback(() => {
+    clearIdleTimer()
+    idleTimerRef.current = setTimeout(() => {
+      endChatSession('idle')
+    }, IDLE_TIMEOUT_MS)
+  }, [endChatSession])
+
+  // Start idle timer when chat session begins
+  useEffect(() => {
+    if (chatId) {
+      resetIdleTimer()
+    } else {
+      clearIdleTimer()
+    }
+    return () => clearIdleTimer()
+  }, [chatId, resetIdleTimer])
+
+  // ── Tab close / page hide beacon ──
+  useEffect(() => {
+    const handlePageHide = () => {
+      const messages = chatMessagesRef.current
+      const userData = sharedRef.current
+      const activeChatId = chatIdRef.current
+      if (!activeChatId || messages.length === 0) return
+      // Use sendBeacon for guaranteed delivery on page unload
+      const payload = JSON.stringify({
+        lead_type: 'ai_chat',
+        form_type: 'chat_summary',
+        firstName: userData.firstName,
+        lastName: userData.lastName,
+        email: userData.email,
+        phone: userData.phone,
+        transcript: buildTranscript(messages),
+        summary: buildSummary(messages),
+        submitted_at: new Date().toISOString(),
+      })
+      if (navigator.sendBeacon) {
+        const blob = new Blob([payload], { type: 'application/json' })
+        navigator.sendBeacon(GHL_WEBHOOK_URL, blob)
+      } else {
+        // Fallback for browsers without sendBeacon
+        fetch(GHL_WEBHOOK_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: payload,
+          keepalive: true,
+        })
+      }
+    }
+    window.addEventListener('pagehide', handlePageHide)
+    return () => window.removeEventListener('pagehide', handlePageHide)
+  }, [])
+
+  // ── Utilities ──
   const getMinPickUpDate = (dropDateString: string) => {
     if (!dropDateString) return new Date().toISOString().split('T')[0]
     const d = new Date(dropDateString + 'T12:00:00')
@@ -190,7 +333,7 @@ export default function ContactForm() {
     setActiveView(view)
     setSubmitStatus('idle')
     setErrors({})
-    // Reset A2P checkboxes for AI tabs on every tab switch — A2P compliance requires fresh consent
+    setChatClosedReason(null)
     setVoiceAiData({ agreeSMS: false, agreePromo: false })
     setChatAiData({ agreeSMS: false, agreePromo: false })
   }
@@ -202,12 +345,13 @@ export default function ContactForm() {
   }
 
   const submitWebhook = (payload: any) =>
-    fetch('https://services.leadconnectorhq.com/hooks/nQv4T6cT4sx1HYZZVpsn/webhook-trigger/ddcc6997-7fad-4cee-b2de-653cd224e260', {
+    fetch(GHL_WEBHOOK_URL, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ ...payload, submitted_at: new Date().toISOString() }),
     })
 
+  // ── Validation ──
   const validateShared = () => {
     const e: Record<string, string> = {}
     if (!shared.firstName.trim()) e.firstName = 'Please fill this out.'
@@ -243,6 +387,7 @@ export default function ContactForm() {
     return e
   }
 
+  // ── Form handlers ──
   const handleRequestSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     const errs = validateRequest()
@@ -297,6 +442,7 @@ export default function ContactForm() {
     const errs = validateAi(chatAiData)
     if (Object.keys(errs).length > 0) { setErrors(errs); return }
     setErrors({})
+    setChatClosedReason(null)
     try {
       await submitWebhook({ lead_type: 'ai_chat', form_type: 'chat', ...shared })
       const res = await fetch('/api/retell', {
@@ -316,7 +462,9 @@ export default function ContactForm() {
   const handleSendMessage = async () => {
     if (!chatInput.trim() || !chatId || isSending) return
     const msg = chatInput.trim()
-    setChatInput(''); setIsSending(true)
+    setChatInput('')
+    setIsSending(true)
+    resetIdleTimer()
     setChatMessages(p => [...p, { role: 'user', content: msg }])
     try {
       const res = await fetch('/api/retell', {
@@ -329,7 +477,10 @@ export default function ContactForm() {
       setChatMessages(p => [...p, { role: 'agent', content: reply }])
     } catch {
       setChatMessages(p => [...p, { role: 'agent', content: 'Sorry, something went wrong. Please try again.' }])
-    } finally { setIsSending(false) }
+    } finally {
+      setIsSending(false)
+      // Focus is restored by the useEffect watching isSending
+    }
   }
 
   const handleChatKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -337,8 +488,13 @@ export default function ContactForm() {
   }
 
   const handleReset = () => {
-    setChatId(null); setChatMessages([]); setChatInput('')
-    setVoiceStatus('idle'); setIsCalling(false)
+    clearIdleTimer()
+    setChatId(null)
+    setChatMessages([])
+    setChatInput('')
+    setChatClosedReason(null)
+    setVoiceStatus('idle')
+    setIsCalling(false)
   }
 
   const tabs: { id: ViewState; topLabel: string; bottomLabel: string; icon: React.ReactNode }[] = [
@@ -411,25 +567,15 @@ export default function ContactForm() {
                     }}
                   >
                     {!isLast && !isActive && !nextIsActive && !isHovered && !nextIsHovered && (
-                      <span
-                        className="absolute right-0 top-1/2 -translate-y-1/2 w-px bg-gray-300"
-                        style={{ height: '55%' }}
-                        aria-hidden="true"
-                      />
+                      <span className="absolute right-0 top-1/2 -translate-y-1/2 w-px bg-gray-300" style={{ height: '55%' }} aria-hidden="true" />
                     )}
-                    <span
-                      className="text-[9px] font-bold uppercase tracking-wider leading-tight transition-colors duration-150"
-                      style={{ color: contentColor }}
-                    >
+                    <span className="text-[9px] font-bold uppercase tracking-wider leading-tight transition-colors duration-150" style={{ color: contentColor }}>
                       {tab.topLabel}
                     </span>
                     <span style={{ color: contentColor }} className="transition-colors duration-150">
                       {tab.icon}
                     </span>
-                    <span
-                      className="text-[9px] font-bold uppercase tracking-wider leading-tight transition-colors duration-150"
-                      style={{ color: contentColor }}
-                    >
+                    <span className="text-[9px] font-bold uppercase tracking-wider leading-tight transition-colors duration-150" style={{ color: contentColor }}>
                       {tab.bottomLabel}
                     </span>
                   </button>
@@ -646,10 +792,10 @@ export default function ContactForm() {
               <div className="space-y-6">
                 {chatId ? (
                   <div>
-                    {/* Chat scroll container — ref targets the box itself, not a sentinel div */}
+                    {/* Chat scroll box — ref on the container, not a sentinel div */}
                     <div
                       ref={chatScrollRef}
-                      className="h-72 overflow-y-auto mb-4 space-y-3 pr-1 border border-gray-100 rounded-xl p-4 bg-gray-50"
+                      className="h-72 overflow-y-auto mb-3 space-y-3 pr-1 border border-gray-100 rounded-xl p-4 bg-gray-50"
                     >
                       {chatMessages.map((msg, i) => (
                         <div key={i} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
@@ -670,21 +816,49 @@ export default function ContactForm() {
                         </div>
                       )}
                     </div>
-                    <div className="flex gap-2">
-                      <input type="text" value={chatInput} onChange={e => setChatInput(e.target.value)}
-                        onKeyDown={handleChatKeyDown} placeholder="Type your message…" disabled={isSending}
-                        className="flex-1 px-4 py-3 border border-gray-300 rounded-lg text-sm outline-none focus:ring-2 focus:ring-orange transition-all disabled:opacity-50" />
-                      <button onClick={handleSendMessage} disabled={isSending || !chatInput.trim()}
-                        className="bg-orange hover:bg-orange/90 text-white px-4 py-3 rounded-lg transition-colors disabled:opacity-40">
+
+                    {/* Input row + End Chat button */}
+                    <div className="flex gap-2 mb-2">
+                      <input
+                        ref={chatInputRef}
+                        type="text"
+                        value={chatInput}
+                        onChange={e => setChatInput(e.target.value)}
+                        onKeyDown={handleChatKeyDown}
+                        placeholder="Type your message…"
+                        disabled={isSending}
+                        className="flex-1 px-4 py-3 border border-gray-300 rounded-lg text-sm outline-none focus:ring-2 focus:ring-orange transition-all disabled:opacity-50"
+                      />
+                      <button
+                        onClick={handleSendMessage}
+                        disabled={isSending || !chatInput.trim()}
+                        className="bg-orange hover:bg-orange/90 text-white px-4 py-3 rounded-lg transition-colors disabled:opacity-40"
+                      >
                         <Send className="h-4 w-4" />
                       </button>
                     </div>
-                    <button onClick={handleReset} className="mt-3 text-gray-400 hover:text-gray-600 text-xs w-full text-center transition-colors">
-                      Start a new inquiry
-                    </button>
+
+                    {/* End Chat + reset row */}
+                    <div className="flex items-center justify-between">
+                      <button
+                        onClick={() => endChatSession('manual')}
+                        className="flex items-center gap-1.5 text-xs font-semibold text-red-500 hover:text-red-700 border border-red-200 hover:border-red-400 bg-red-50 hover:bg-red-100 px-3 py-1.5 rounded-lg transition-colors"
+                      >
+                        <StopCircle className="h-3.5 w-3.5" /> End Chat
+                      </button>
+                      <button onClick={handleReset} className="text-gray-400 hover:text-gray-600 text-xs transition-colors">
+                        Start a new inquiry
+                      </button>
+                    </div>
                   </div>
                 ) : (
                   <>
+                    {/* Chat closed message (idle timeout or manual end) */}
+                    {chatClosedReason && (
+                      <div className="bg-gray-50 border border-gray-200 rounded-lg p-4 text-sm text-gray-600 text-center">
+                        {chatClosedReason}
+                      </div>
+                    )}
                     <p className="text-sm text-gray-600">
                       Questions at 3am? No problem. Our AI chat agent can answer questions about bin sizes, move timing,
                       and pricing at any hour — no phone call required.
