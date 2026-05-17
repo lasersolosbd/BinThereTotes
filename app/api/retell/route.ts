@@ -59,7 +59,7 @@ export async function POST(req: Request) {
 
     // ── Chat: create a new chat session, return chatId ──
     if (mode === 'text') {
-      const retellRes = await fetch('https://api.retellai.com/v2/create-chat-session', {
+      const retellRes = await fetch('https://api.retellai.com/v2/create-chat', {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${RETELL_API_KEY}`,
