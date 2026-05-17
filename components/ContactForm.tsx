@@ -28,6 +28,7 @@ interface ChatMessage {
 
 export default function ContactForm() {
   const [activeView, setActiveView] = useState<ViewState>('request')
+  const [hoveredTab, setHoveredTab] = useState<ViewState | null>(null)
 
   const [shared, setShared] = useState<SharedFields>({
     firstName: '', lastName: '', email: '', phone: '',
@@ -353,44 +354,56 @@ export default function ContactForm() {
             <div className="flex bg-gray-100/80 rounded-xl p-1 mb-8">
               {tabs.map((tab, index) => {
                 const isActive = activeView === tab.id
+                const isHovered = hoveredTab === tab.id
                 const isLast = index === tabs.length - 1
                 const nextIsActive = index < tabs.length - 1 && activeView === tabs[index + 1].id
+                const nextIsHovered = index < tabs.length - 1 && hoveredTab === tabs[index + 1].id
+
+                // Determine button background
+                let bgColor = 'transparent'
+                if (isActive) bgColor = '#ffffff'
+                else if (isHovered) bgColor = 'rgba(0,0,0,0.05)'
+
+                // Determine text/icon color
+                const contentColor = isActive ? '#E8561E' : isHovered ? '#1f2937' : '#374151'
 
                 return (
                   <button
                     key={tab.id}
                     onClick={() => changeView(tab.id)}
-                    className="relative flex-1 flex flex-col items-center justify-center gap-1 py-2.5 px-1 rounded-lg transition-all duration-200"
+                    onMouseEnter={() => setHoveredTab(tab.id)}
+                    onMouseLeave={() => setHoveredTab(null)}
+                    className="relative flex-1 flex flex-col items-center justify-center gap-1 py-2.5 px-1 rounded-lg transition-all duration-150"
                     style={isActive ? {
-                      backgroundColor: '#ffffff',
+                      backgroundColor: bgColor,
                       border: '1px solid #E8561E',
                       boxShadow: '0 1px 4px rgba(0,0,0,0.10), 0 0.5px 1px rgba(0,0,0,0.06)',
                     } : {
-                      backgroundColor: 'transparent',
+                      backgroundColor: bgColor,
                       border: '1px solid transparent',
                     }}
                   >
-                    {/* Vertical divider — hidden on last tab and when adjacent to an active tab */}
-                    {!isLast && !isActive && !nextIsActive && (
+                    {/* Vertical divider — hidden when adjacent to active or hovered tab */}
+                    {!isLast && !isActive && !nextIsActive && !isHovered && !nextIsHovered && (
                       <span
-                        className="absolute right-0 top-1/2 -translate-y-1/2 w-px bg-gray-200"
+                        className="absolute right-0 top-1/2 -translate-y-1/2 w-px bg-gray-300"
                         style={{ height: '55%' }}
                         aria-hidden="true"
                       />
                     )}
 
                     <span
-                      className="text-[9px] font-bold uppercase tracking-wider leading-tight"
-                      style={{ color: isActive ? '#E8561E' : '#374151' }}
+                      className="text-[9px] font-bold uppercase tracking-wider leading-tight transition-colors duration-150"
+                      style={{ color: contentColor }}
                     >
                       {tab.topLabel}
                     </span>
-                    <span style={{ color: isActive ? '#E8561E' : '#374151' }}>
+                    <span style={{ color: contentColor }} className="transition-colors duration-150">
                       {tab.icon}
                     </span>
                     <span
-                      className="text-[9px] font-bold uppercase tracking-wider leading-tight"
-                      style={{ color: isActive ? '#E8561E' : '#374151' }}
+                      className="text-[9px] font-bold uppercase tracking-wider leading-tight transition-colors duration-150"
+                      style={{ color: contentColor }}
                     >
                       {tab.bottomLabel}
                     </span>
