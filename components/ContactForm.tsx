@@ -1,6 +1,5 @@
 'use client'
 
-import Link from 'next/link'
 import { useState, useEffect, useRef } from 'react'
 import { Phone, Calendar, MessageSquare, Send, CheckCircle, MapPin, Mail, Mic, PhoneOff } from 'lucide-react'
 import { RetellWebClient } from 'retell-client-js-sdk'
@@ -26,6 +25,94 @@ interface ChatMessage {
   content: string
 }
 
+// ── Moved outside ContactForm so React never remounts on parent re-render ──
+
+interface SharedFieldBlockProps {
+  shared: SharedFields
+  errors: Record<string, string>
+  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void
+  inputCls: (field: string) => string
+}
+
+function SharedFieldBlock({ shared, errors, onChange, inputCls }: SharedFieldBlockProps) {
+  return (
+    <div className="space-y-4">
+      <div className="grid grid-cols-2 gap-4">
+        <div>
+          <label className="block text-sm font-semibold text-navy mb-1">First Name *</label>
+          <input type="text" name="firstName" value={shared.firstName} onChange={onChange} placeholder="First name" className={inputCls('firstName')} />
+          {errors.firstName && <p className="text-red-500 text-xs mt-1 font-semibold">{errors.firstName}</p>}
+        </div>
+        <div>
+          <label className="block text-sm font-semibold text-navy mb-1">Last Name *</label>
+          <input type="text" name="lastName" value={shared.lastName} onChange={onChange} placeholder="Last name" className={inputCls('lastName')} />
+          {errors.lastName && <p className="text-red-500 text-xs mt-1 font-semibold">{errors.lastName}</p>}
+        </div>
+      </div>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div>
+          <label className="block text-sm font-semibold text-navy mb-1">Email *</label>
+          <input type="email" name="email" value={shared.email} onChange={onChange} placeholder="you@email.com" className={inputCls('email')} />
+          {errors.email && <p className="text-red-500 text-xs mt-1 font-semibold">{errors.email}</p>}
+        </div>
+        <div>
+          <label className="block text-sm font-semibold text-navy mb-1">Phone *</label>
+          <input type="tel" name="phone" value={shared.phone} onChange={onChange} maxLength={14} placeholder="(567) 000-0000" className={inputCls('phone')} />
+          {errors.phone && <p className="text-red-500 text-xs mt-1 font-semibold">{errors.phone}</p>}
+        </div>
+      </div>
+    </div>
+  )
+}
+
+interface A2PBlockProps {
+  smsId: string
+  promoId: string
+  smsChecked: boolean
+  promoChecked: boolean
+  smsError?: string
+  promoError?: string
+  onSmsChange: (v: boolean) => void
+  onPromoChange: (v: boolean) => void
+}
+
+function A2PBlock({ smsId, promoId, smsChecked, promoChecked, smsError, promoError, onSmsChange, onPromoChange }: A2PBlockProps) {
+  return (
+    <div className="space-y-3 pt-4 border-t border-gray-100">
+      <div className="flex items-start space-x-3 bg-navy/5 p-4 rounded-lg border border-navy/10">
+        <input type="checkbox" id={smsId} checked={smsChecked} onChange={e => onSmsChange(e.target.checked)}
+          className="mt-1 h-5 w-5 text-orange focus:ring-orange rounded flex-shrink-0" />
+        <label htmlFor={smsId} className="text-xs text-gray-800 leading-relaxed">
+          By submitting, you authorize Sheets Holdings DBA Bin There Totes to text/call the number above for
+          informational/transactional messages, possibly using automated means. Msg/data rates apply, msg frequency
+          varies. Consent is not a condition of purchase.{' '}
+          <a href="https://www.leadconnectorhq.com/terms2" target="_blank" rel="noopener noreferrer" className="underline text-orange hover:text-orange/80">See terms</a>
+          {' '}and{' '}
+          <a href="https://www.leadconnectorhq.com/privacy-policy" target="_blank" rel="noopener noreferrer" className="underline text-orange hover:text-orange/80">privacy policy</a>.
+          {' '}Text HELP for help and STOP to unsubscribe.
+        </label>
+      </div>
+      {smsError && <p className="text-red-500 text-xs font-semibold pl-1">{smsError}</p>}
+      <div className="flex items-start space-x-3 bg-navy/5 p-4 rounded-lg border border-navy/10">
+        <input type="checkbox" id={promoId} checked={promoChecked} onChange={e => onPromoChange(e.target.checked)}
+          className="mt-1 h-5 w-5 text-orange focus:ring-orange rounded flex-shrink-0" />
+        <label htmlFor={promoId} className="text-xs text-gray-800 leading-relaxed">
+          By submitting, you authorize Sheets Holdings DBA Bin There Totes to text/call the number above for
+          promotional messages, possibly using automated means. Msg/data rates apply, msg frequency varies.
+          Consent is not a condition of purchase.{' '}
+          <a href="https://www.leadconnectorhq.com/terms2" target="_blank" rel="noopener noreferrer" className="underline text-orange hover:text-orange/80">See terms</a>
+          {' '}and{' '}
+          <a href="https://www.leadconnectorhq.com/privacy-policy" target="_blank" rel="noopener noreferrer" className="underline text-orange hover:text-orange/80">privacy policy</a>.
+          {' '}Text HELP for help and STOP to unsubscribe.
+        </label>
+      </div>
+      {promoError && <p className="text-red-500 text-xs font-semibold pl-1">{promoError}</p>}
+    </div>
+  )
+}
+
+// ── Main component ──
+
 export default function ContactForm() {
   const [activeView, setActiveView] = useState<ViewState>('request')
   const [hoveredTab, setHoveredTab] = useState<ViewState | null>(null)
@@ -44,7 +131,9 @@ export default function ContactForm() {
     questions: '', agreeSMS: false, agreeVoice: false,
   })
 
-  const [aiData, setAiData] = useState<AiTabData>({ agreeSMS: false, agreePromo: false })
+  // A2P checkboxes for voice and chat tabs — reset independently, not shared
+  const [voiceAiData, setVoiceAiData] = useState<AiTabData>({ agreeSMS: false, agreePromo: false })
+  const [chatAiData, setChatAiData] = useState<AiTabData>({ agreeSMS: false, agreePromo: false })
 
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [submitStatus, setSubmitStatus] = useState<'idle' | 'success' | 'error'>('idle')
@@ -96,6 +185,9 @@ export default function ContactForm() {
     setActiveView(view)
     setSubmitStatus('idle')
     setErrors({})
+    // Reset A2P checkboxes for AI tabs on every tab switch — A2P compliance requires fresh consent
+    setVoiceAiData({ agreeSMS: false, agreePromo: false })
+    setChatAiData({ agreeSMS: false, agreePromo: false })
   }
 
   const handleSharedChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -139,7 +231,7 @@ export default function ContactForm() {
     return e
   }
 
-  const validateAi = () => {
+  const validateAi = (aiData: AiTabData) => {
     const e = validateShared()
     if (!aiData.agreeSMS) e.agreeSMS = 'Please accept to continue.'
     if (!aiData.agreePromo) e.agreePromo = 'Please accept to continue.'
@@ -171,7 +263,7 @@ export default function ContactForm() {
   }
 
   const handleStartVoice = async () => {
-    const errs = validateAi()
+    const errs = validateAi(voiceAiData)
     if (Object.keys(errs).length > 0) { setErrors(errs); return }
     setErrors({}); setVoiceStatus('connecting')
     try {
@@ -197,7 +289,7 @@ export default function ContactForm() {
   const handleEndCall = () => retellWebClient.stopCall()
 
   const handleStartChat = async () => {
-    const errs = validateAi()
+    const errs = validateAi(chatAiData)
     if (Object.keys(errs).length > 0) { setErrors(errs); return }
     setErrors({})
     try {
@@ -243,74 +335,6 @@ export default function ContactForm() {
     setChatId(null); setChatMessages([]); setChatInput('')
     setVoiceStatus('idle'); setIsCalling(false)
   }
-
-  const SharedFieldBlock = () => (
-    <div className="space-y-4">
-      <div className="grid grid-cols-2 gap-4">
-        <div>
-          <label className="block text-sm font-semibold text-navy mb-1">First Name *</label>
-          <input type="text" name="firstName" value={shared.firstName} onChange={handleSharedChange} placeholder="First name" className={inputCls('firstName')} />
-          {errors.firstName && <p className="text-red-500 text-xs mt-1 font-semibold">{errors.firstName}</p>}
-        </div>
-        <div>
-          <label className="block text-sm font-semibold text-navy mb-1">Last Name *</label>
-          <input type="text" name="lastName" value={shared.lastName} onChange={handleSharedChange} placeholder="Last name" className={inputCls('lastName')} />
-          {errors.lastName && <p className="text-red-500 text-xs mt-1 font-semibold">{errors.lastName}</p>}
-        </div>
-      </div>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div>
-          <label className="block text-sm font-semibold text-navy mb-1">Email *</label>
-          <input type="email" name="email" value={shared.email} onChange={handleSharedChange} placeholder="you@email.com" className={inputCls('email')} />
-          {errors.email && <p className="text-red-500 text-xs mt-1 font-semibold">{errors.email}</p>}
-        </div>
-        <div>
-          <label className="block text-sm font-semibold text-navy mb-1">Phone *</label>
-          <input type="tel" name="phone" value={shared.phone} onChange={handleSharedChange} maxLength={14} placeholder="(567) 000-0000" className={inputCls('phone')} />
-          {errors.phone && <p className="text-red-500 text-xs mt-1 font-semibold">{errors.phone}</p>}
-        </div>
-      </div>
-    </div>
-  )
-
-  const A2PBlock = ({
-    smsId, promoId, smsChecked, promoChecked, onSmsChange, onPromoChange,
-  }: {
-    smsId: string; promoId: string
-    smsChecked: boolean; promoChecked: boolean
-    onSmsChange: (v: boolean) => void; onPromoChange: (v: boolean) => void
-  }) => (
-    <div className="space-y-3 pt-4 border-t border-gray-100">
-      <div className="flex items-start space-x-3 bg-navy/5 p-4 rounded-lg border border-navy/10">
-        <input type="checkbox" id={smsId} checked={smsChecked} onChange={e => onSmsChange(e.target.checked)}
-          className="mt-1 h-5 w-5 text-orange focus:ring-orange rounded flex-shrink-0" />
-        <label htmlFor={smsId} className="text-xs text-gray-800 leading-relaxed">
-          By submitting, you authorize Sheets Holdings DBA Bin There Totes to text/call the number above for
-          informational/transactional messages, possibly using automated means. Msg/data rates apply, msg frequency
-          varies. Consent is not a condition of purchase.{' '}
-          <a href="https://www.leadconnectorhq.com/terms2" target="_blank" rel="noopener noreferrer" className="underline text-orange hover:text-orange/80">See terms</a>
-          {' '}and{' '}
-          <a href="https://www.leadconnectorhq.com/privacy-policy" target="_blank" rel="noopener noreferrer" className="underline text-orange hover:text-orange/80">privacy policy</a>.
-          {' '}Text HELP for help and STOP to unsubscribe.
-        </label>
-      </div>
-      {errors.agreeSMS && <p className="text-red-500 text-xs font-semibold pl-1">{errors.agreeSMS}</p>}
-      <div className="flex items-start space-x-3 bg-navy/5 p-4 rounded-lg border border-navy/10">
-        <input type="checkbox" id={promoId} checked={promoChecked} onChange={e => onPromoChange(e.target.checked)}
-          className="mt-1 h-5 w-5 text-orange focus:ring-orange rounded flex-shrink-0" />
-        <label htmlFor={promoId} className="text-xs text-gray-800 leading-relaxed">
-          By submitting, you authorize Sheets Holdings DBA Bin There Totes to text/call the number above for
-          promotional messages, possibly using automated means. Msg/data rates apply, msg frequency varies.
-          Consent is not a condition of purchase.{' '}
-          <a href="https://www.leadconnectorhq.com/terms2" target="_blank" rel="noopener noreferrer" className="underline text-orange hover:text-orange/80">See terms</a>
-          {' '}and{' '}
-          <a href="https://www.leadconnectorhq.com/privacy-policy" target="_blank" rel="noopener noreferrer" className="underline text-orange hover:text-orange/80">privacy policy</a>.
-          {' '}Text HELP for help and STOP to unsubscribe.
-        </label>
-      </div>
-      {errors.agreePromo && <p className="text-red-500 text-xs font-semibold pl-1">{errors.agreePromo}</p>}
-    </div>
-  )
 
   const tabs: { id: ViewState; topLabel: string; bottomLabel: string; icon: React.ReactNode }[] = [
     { id: 'request', topLabel: 'Reserve',  bottomLabel: 'Bins Now',  icon: <Calendar className="h-5 w-5" /> },
@@ -359,12 +383,10 @@ export default function ContactForm() {
                 const nextIsActive = index < tabs.length - 1 && activeView === tabs[index + 1].id
                 const nextIsHovered = index < tabs.length - 1 && hoveredTab === tabs[index + 1].id
 
-                // Determine button background
                 let bgColor = 'transparent'
                 if (isActive) bgColor = '#ffffff'
                 else if (isHovered) bgColor = 'rgba(0,0,0,0.05)'
 
-                // Determine text/icon color
                 const contentColor = isActive ? '#E8561E' : isHovered ? '#1f2937' : '#374151'
 
                 return (
@@ -383,7 +405,6 @@ export default function ContactForm() {
                       border: '1px solid transparent',
                     }}
                   >
-                    {/* Vertical divider — hidden when adjacent to active or hovered tab */}
                     {!isLast && !isActive && !nextIsActive && !isHovered && !nextIsHovered && (
                       <span
                         className="absolute right-0 top-1/2 -translate-y-1/2 w-px bg-gray-300"
@@ -391,7 +412,6 @@ export default function ContactForm() {
                         aria-hidden="true"
                       />
                     )}
-
                     <span
                       className="text-[9px] font-bold uppercase tracking-wider leading-tight transition-colors duration-150"
                       style={{ color: contentColor }}
@@ -429,7 +449,12 @@ export default function ContactForm() {
 
             {activeView === 'request' && submitStatus !== 'success' && (
               <form onSubmit={handleRequestSubmit} noValidate className="space-y-6">
-                <SharedFieldBlock />
+                <SharedFieldBlock
+                  shared={shared}
+                  errors={errors}
+                  onChange={handleSharedChange}
+                  inputCls={inputCls}
+                />
                 <div className="pt-4 border-t border-gray-100">
                   <h4 className="text-sm font-bold text-navy uppercase tracking-wider mb-4">Location Details</h4>
                   <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-4">
@@ -442,7 +467,7 @@ export default function ContactForm() {
                     </div>
                     <div>
                       <label className="block text-sm font-semibold text-gray-700 mb-1">Current Zip *</label>
-                      <input type="text" value={requestData.currentZip} placeholder="45801"
+                      <input type="text" value={requestData.currentZip} placeholder="45801" maxLength={5}
                         onChange={e => { if (errors.currentZip) setErrors(p => ({ ...p, currentZip: '' })); setRequestData(p => ({ ...p, currentZip: e.target.value })) }}
                         className={inputCls('currentZip')} />
                       {errors.currentZip && <p className="text-red-500 text-xs mt-1 font-semibold">{errors.currentZip}</p>}
@@ -459,7 +484,7 @@ export default function ContactForm() {
                     </div>
                     <div>
                       <label className="block text-sm font-semibold text-gray-700 mb-1">Moving To Zip *</label>
-                      <input type="text" value={requestData.movingToZip} placeholder="45801"
+                      <input type="text" value={requestData.movingToZip} placeholder="45801" maxLength={5}
                         onChange={e => { if (errors.movingToZip) setErrors(p => ({ ...p, movingToZip: '' })); setRequestData(p => ({ ...p, movingToZip: e.target.value })) }}
                         className={inputCls('movingToZip')} />
                       {errors.movingToZip && <p className="text-red-500 text-xs mt-1 font-semibold">{errors.movingToZip}</p>}
@@ -501,6 +526,7 @@ export default function ContactForm() {
                 <A2PBlock
                   smsId="req-sms" promoId="req-promo"
                   smsChecked={requestData.agreeSMS} promoChecked={requestData.agreeVoice}
+                  smsError={errors.agreeSMS} promoError={errors.agreePromo}
                   onSmsChange={v => setRequestData(p => ({ ...p, agreeSMS: v }))}
                   onPromoChange={v => setRequestData(p => ({ ...p, agreeVoice: v }))}
                 />
@@ -514,7 +540,12 @@ export default function ContactForm() {
 
             {activeView === 'quote' && submitStatus !== 'success' && (
               <form onSubmit={handleQuoteSubmit} noValidate className="space-y-6">
-                <SharedFieldBlock />
+                <SharedFieldBlock
+                  shared={shared}
+                  errors={errors}
+                  onChange={handleSharedChange}
+                  inputCls={inputCls}
+                />
                 <div className="pt-4 border-t border-gray-100">
                   <h4 className="text-sm font-bold text-navy uppercase tracking-wider mb-4">Location Details</h4>
                   <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-4">
@@ -527,7 +558,7 @@ export default function ContactForm() {
                     </div>
                     <div>
                       <label className="block text-sm font-semibold text-gray-700 mb-1">Current Zip *</label>
-                      <input type="text" value={quoteData.currentZip} placeholder="45801"
+                      <input type="text" value={quoteData.currentZip} placeholder="45801" maxLength={5}
                         onChange={e => { if (errors.currentZip) setErrors(p => ({ ...p, currentZip: '' })); setQuoteData(p => ({ ...p, currentZip: e.target.value })) }}
                         className={inputCls('currentZip')} />
                       {errors.currentZip && <p className="text-red-500 text-xs mt-1 font-semibold">{errors.currentZip}</p>}
@@ -544,7 +575,7 @@ export default function ContactForm() {
                     </div>
                     <div>
                       <label className="block text-sm font-semibold text-gray-700 mb-1">Moving To Zip *</label>
-                      <input type="text" value={quoteData.movingToZip} placeholder="45801"
+                      <input type="text" value={quoteData.movingToZip} placeholder="45801" maxLength={5}
                         onChange={e => { if (errors.movingToZip) setErrors(p => ({ ...p, movingToZip: '' })); setQuoteData(p => ({ ...p, movingToZip: e.target.value })) }}
                         className={inputCls('movingToZip')} />
                       {errors.movingToZip && <p className="text-red-500 text-xs mt-1 font-semibold">{errors.movingToZip}</p>}
@@ -562,6 +593,7 @@ export default function ContactForm() {
                 <A2PBlock
                   smsId="quote-sms" promoId="quote-promo"
                   smsChecked={quoteData.agreeSMS} promoChecked={quoteData.agreeVoice}
+                  smsError={errors.agreeSMS} promoError={errors.agreePromo}
                   onSmsChange={v => setQuoteData(p => ({ ...p, agreeSMS: v }))}
                   onPromoChange={v => setQuoteData(p => ({ ...p, agreeVoice: v }))}
                 />
@@ -598,12 +630,18 @@ export default function ContactForm() {
                       Our AI agent can walk you through bin sizes, availability, and pricing — right now, no hold music.
                       Enter your info and click Start to connect.
                     </p>
-                    <SharedFieldBlock />
+                    <SharedFieldBlock
+                      shared={shared}
+                      errors={errors}
+                      onChange={handleSharedChange}
+                      inputCls={inputCls}
+                    />
                     <A2PBlock
                       smsId="voice-sms" promoId="voice-promo"
-                      smsChecked={aiData.agreeSMS} promoChecked={aiData.agreePromo}
-                      onSmsChange={v => { if (errors.agreeSMS) setErrors(p => ({ ...p, agreeSMS: '' })); setAiData(p => ({ ...p, agreeSMS: v })) }}
-                      onPromoChange={v => { if (errors.agreePromo) setErrors(p => ({ ...p, agreePromo: '' })); setAiData(p => ({ ...p, agreePromo: v })) }}
+                      smsChecked={voiceAiData.agreeSMS} promoChecked={voiceAiData.agreePromo}
+                      smsError={errors.agreeSMS} promoError={errors.agreePromo}
+                      onSmsChange={v => { if (errors.agreeSMS) setErrors(p => ({ ...p, agreeSMS: '' })); setVoiceAiData(p => ({ ...p, agreeSMS: v })) }}
+                      onPromoChange={v => { if (errors.agreePromo) setErrors(p => ({ ...p, agreePromo: '' })); setVoiceAiData(p => ({ ...p, agreePromo: v })) }}
                     />
                     <button onClick={handleStartVoice} disabled={voiceStatus === 'connecting'}
                       className="w-full bg-orange text-white py-4 rounded-lg font-bold hover:bg-orange/90 transition-colors disabled:opacity-50 flex justify-center items-center gap-2 text-sm uppercase tracking-wider">
@@ -658,12 +696,18 @@ export default function ContactForm() {
                       Questions at 3am? No problem. Our AI chat agent can answer questions about bin sizes, move timing,
                       and pricing at any hour — no phone call required.
                     </p>
-                    <SharedFieldBlock />
+                    <SharedFieldBlock
+                      shared={shared}
+                      errors={errors}
+                      onChange={handleSharedChange}
+                      inputCls={inputCls}
+                    />
                     <A2PBlock
                       smsId="chat-sms" promoId="chat-promo"
-                      smsChecked={aiData.agreeSMS} promoChecked={aiData.agreePromo}
-                      onSmsChange={v => { if (errors.agreeSMS) setErrors(p => ({ ...p, agreeSMS: '' })); setAiData(p => ({ ...p, agreeSMS: v })) }}
-                      onPromoChange={v => { if (errors.agreePromo) setErrors(p => ({ ...p, agreePromo: '' })); setAiData(p => ({ ...p, agreePromo: v })) }}
+                      smsChecked={chatAiData.agreeSMS} promoChecked={chatAiData.agreePromo}
+                      smsError={errors.agreeSMS} promoError={errors.agreePromo}
+                      onSmsChange={v => { if (errors.agreeSMS) setErrors(p => ({ ...p, agreeSMS: '' })); setChatAiData(p => ({ ...p, agreeSMS: v })) }}
+                      onPromoChange={v => { if (errors.agreePromo) setErrors(p => ({ ...p, agreePromo: '' })); setChatAiData(p => ({ ...p, agreePromo: v })) }}
                     />
                     <button onClick={handleStartChat}
                       className="w-full bg-orange text-white py-4 rounded-lg font-bold hover:bg-orange/90 transition-colors flex justify-center items-center gap-2 text-sm uppercase tracking-wider">
