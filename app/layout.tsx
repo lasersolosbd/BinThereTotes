@@ -65,14 +65,6 @@ export default function RootLayout({
       </head>
       <body>
         {children}
-        {/* LeadConnector Chat Widget — A2P Compliance: loaded in body for scraper detection */}
-        <Script
-          src="https://widgets.leadconnectorhq.com/loader.js"
-          data-resources-url="https://widgets.leadconnectorhq.com/chat-widget/loader.js"
-          data-widget-id="69f7f8fa9b1858b5ee9d7e6a"
-          data-source="WEB_USER"
-          strategy="afterInteractive"
-        />
       </body>
     </html>
   )
