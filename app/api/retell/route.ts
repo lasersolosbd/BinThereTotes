@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server'
 
-const RETELL_API_KEY = process.env.RETELL_API_KEY
+const RETELL_API_KEY        = process.env.RETELL_API_KEY
 const RETELL_VOICE_AGENT_ID = process.env.RETELL_VOICE_AGENT_ID ?? 'agent_01f72643f56ef16629f99c0b7f'
 const RETELL_CHAT_AGENT_ID  = process.env.RETELL_CHAT_AGENT_ID  ?? 'agent_af8ede01698b483f7376e8be2f'
 
@@ -98,7 +98,10 @@ export async function POST(req: Request) {
       return NextResponse.json({ chatId: data.chat_id })
     }
 
-    // ── Chat message: send a message and return the agent reply ──
+    // ── Chat message: send user message, return agent reply ──
+    // Correct endpoint: POST /create-chat-completion
+    // Body: { chat_id, content }
+    // Response: { messages: [{ role, content, ... }] }
     if (mode === 'chat_message') {
       if (!chatId || !message) {
         return NextResponse.json(
@@ -107,17 +110,17 @@ export async function POST(req: Request) {
         )
       }
 
-      const retellRes = await fetch(
-        `https://api.retellai.com/v2/send-chat-message/${encodeURIComponent(chatId)}`,
-        {
-          method: 'POST',
-          headers: {
-            'Authorization': `Bearer ${RETELL_API_KEY}`,
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ message }),
-        }
-      )
+      const retellRes = await fetch('https://api.retellai.com/create-chat-completion', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${RETELL_API_KEY}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          chat_id: chatId,
+          content: message,
+        }),
+      })
 
       if (!retellRes.ok) {
         const errText = await retellRes.text()
@@ -130,12 +133,9 @@ export async function POST(req: Request) {
 
       const data = await retellRes.json()
 
-      // Normalise reply shape — Retell may use content or message
-      const replyText =
-        data?.content ??
-        data?.message ??
-        data?.response ??
-        'Sorry, I could not get a reply. Please try again.'
+      // Response shape: { messages: [{ role: 'agent', content: '...', ... }] }
+      const agentMessage = data?.messages?.find((m: any) => m.role === 'agent')
+      const replyText = agentMessage?.content ?? 'Sorry, I could not get a reply. Please try again.'
 
       return NextResponse.json({ reply: { content: replyText } })
     }
