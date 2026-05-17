@@ -311,11 +311,11 @@ export default function ContactForm() {
     </div>
   )
 
-  const tabs: { id: ViewState; label: string; icon: React.ReactNode }[] = [
-    { id: 'request', label: 'Reserve',  icon: <Calendar className="h-5 w-5" /> },
-    { id: 'quote',   label: 'Custom',   icon: <MessageSquare className="h-5 w-5" /> },
-    { id: 'voice',   label: 'Talk AI',  icon: <Mic className="h-5 w-5" /> },
-    { id: 'chat',    label: 'Chat AI',  icon: <Send className="h-5 w-5" /> },
+  const tabs: { id: ViewState; topLabel: string; bottomLabel: string; icon: React.ReactNode }[] = [
+    { id: 'request', topLabel: 'Reserve',  bottomLabel: 'Bins Now',   icon: <Calendar className="h-5 w-5" /> },
+    { id: 'quote',   topLabel: 'Custom',   bottomLabel: 'Bin Order',  icon: <MessageSquare className="h-5 w-5" /> },
+    { id: 'voice',   topLabel: 'Talk',     bottomLabel: 'to AI',      icon: <Mic className="h-5 w-5" /> },
+    { id: 'chat',    topLabel: 'Chat',     bottomLabel: 'with AI',    icon: <Send className="h-5 w-5" /> },
   ]
 
   return (
@@ -349,19 +349,42 @@ export default function ContactForm() {
 
           <div className="lg:col-span-8 bg-white rounded-2xl shadow-xl overflow-hidden p-6 md:p-10">
 
-            <div className="grid grid-cols-2 gap-3 mb-8">
-              {tabs.map(tab => (
-                <button key={tab.id} onClick={() => changeView(tab.id)}
-                  className={`p-4 rounded-xl border-2 flex flex-col items-center justify-center gap-1.5 text-center transition-all ${
-                    activeView === tab.id ? 'border-orange bg-orange/5' : 'border-gray-100 hover:border-orange/40 bg-white'
-                  }`}
-                >
-                  <span className={activeView === tab.id ? 'text-orange' : 'text-gray-400'}>{tab.icon}</span>
-                  <span className={`text-xs font-bold uppercase tracking-wider ${activeView === tab.id ? 'text-navy' : 'text-gray-500'}`}>
-                    {tab.label}
-                  </span>
-                </button>
-              ))}
+            {/* ── Segmented pill tab bar ── */}
+            <div className="flex gap-1 bg-gray-100/80 rounded-xl p-1 mb-8">
+              {tabs.map(tab => {
+                const isActive = activeView === tab.id
+                return (
+                  <button
+                    key={tab.id}
+                    onClick={() => changeView(tab.id)}
+                    className="flex-1 flex flex-col items-center justify-center gap-1 py-2.5 px-1 rounded-lg transition-all duration-200"
+                    style={isActive ? {
+                      backgroundColor: '#ffffff',
+                      border: '1px solid #E8561E',
+                      boxShadow: '0 1px 4px rgba(0,0,0,0.10), 0 0.5px 1px rgba(0,0,0,0.06)',
+                    } : {
+                      backgroundColor: 'transparent',
+                      border: '1px solid transparent',
+                    }}
+                  >
+                    <span
+                      className="text-[9px] font-bold uppercase tracking-wider leading-tight"
+                      style={{ color: isActive ? '#E8561E' : '#475569' }}
+                    >
+                      {tab.topLabel}
+                    </span>
+                    <span style={{ color: isActive ? '#E8561E' : '#475569' }}>
+                      {tab.icon}
+                    </span>
+                    <span
+                      className="text-[9px] font-bold uppercase tracking-wider leading-tight"
+                      style={{ color: isActive ? '#E8561E' : '#475569' }}
+                    >
+                      {tab.bottomLabel}
+                    </span>
+                  </button>
+                )
+              })}
             </div>
 
             {submitStatus === 'success' && (
