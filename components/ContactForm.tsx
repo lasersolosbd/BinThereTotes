@@ -146,7 +146,9 @@ export default function ContactForm() {
   const [chatMessages, setChatMessages] = useState<ChatMessage[]>([])
   const [chatInput, setChatInput] = useState('')
   const [isSending, setIsSending] = useState(false)
-  const chatEndRef = useRef<HTMLDivElement>(null)
+
+  // Ref for the scrollable chat container — not a sentinel div — so we scroll the box, not the page
+  const chatScrollRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     retellWebClient.on('call_started', () => { setIsCalling(true); setVoiceStatus('active') })
@@ -163,8 +165,11 @@ export default function ContactForm() {
     }
   }, [])
 
+  // Scroll the chat container to the bottom on new messages — scoped to the box, not the page
   useEffect(() => {
-    chatEndRef.current?.scrollIntoView({ behavior: 'smooth' })
+    if (chatScrollRef.current) {
+      chatScrollRef.current.scrollTop = chatScrollRef.current.scrollHeight
+    }
   }, [chatMessages])
 
   const getMinPickUpDate = (dropDateString: string) => {
@@ -320,7 +325,7 @@ export default function ContactForm() {
       })
       const data = await res.json()
       if (!res.ok) throw new Error('Reply failed')
-      const reply = data.reply?.content || data.reply?.message || 'Sorry, something went wrong. Please try again.'
+      const reply = data.reply?.content || 'Sorry, something went wrong. Please try again.'
       setChatMessages(p => [...p, { role: 'agent', content: reply }])
     } catch {
       setChatMessages(p => [...p, { role: 'agent', content: 'Sorry, something went wrong. Please try again.' }])
@@ -449,12 +454,7 @@ export default function ContactForm() {
 
             {activeView === 'request' && submitStatus !== 'success' && (
               <form onSubmit={handleRequestSubmit} noValidate className="space-y-6">
-                <SharedFieldBlock
-                  shared={shared}
-                  errors={errors}
-                  onChange={handleSharedChange}
-                  inputCls={inputCls}
-                />
+                <SharedFieldBlock shared={shared} errors={errors} onChange={handleSharedChange} inputCls={inputCls} />
                 <div className="pt-4 border-t border-gray-100">
                   <h4 className="text-sm font-bold text-navy uppercase tracking-wider mb-4">Location Details</h4>
                   <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-4">
@@ -540,12 +540,7 @@ export default function ContactForm() {
 
             {activeView === 'quote' && submitStatus !== 'success' && (
               <form onSubmit={handleQuoteSubmit} noValidate className="space-y-6">
-                <SharedFieldBlock
-                  shared={shared}
-                  errors={errors}
-                  onChange={handleSharedChange}
-                  inputCls={inputCls}
-                />
+                <SharedFieldBlock shared={shared} errors={errors} onChange={handleSharedChange} inputCls={inputCls} />
                 <div className="pt-4 border-t border-gray-100">
                   <h4 className="text-sm font-bold text-navy uppercase tracking-wider mb-4">Location Details</h4>
                   <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-4">
@@ -630,12 +625,7 @@ export default function ContactForm() {
                       Our AI agent can walk you through bin sizes, availability, and pricing — right now, no hold music.
                       Enter your info and click Start to connect.
                     </p>
-                    <SharedFieldBlock
-                      shared={shared}
-                      errors={errors}
-                      onChange={handleSharedChange}
-                      inputCls={inputCls}
-                    />
+                    <SharedFieldBlock shared={shared} errors={errors} onChange={handleSharedChange} inputCls={inputCls} />
                     <A2PBlock
                       smsId="voice-sms" promoId="voice-promo"
                       smsChecked={voiceAiData.agreeSMS} promoChecked={voiceAiData.agreePromo}
@@ -656,7 +646,11 @@ export default function ContactForm() {
               <div className="space-y-6">
                 {chatId ? (
                   <div>
-                    <div className="h-72 overflow-y-auto mb-4 space-y-3 pr-1 border border-gray-100 rounded-xl p-4 bg-gray-50">
+                    {/* Chat scroll container — ref targets the box itself, not a sentinel div */}
+                    <div
+                      ref={chatScrollRef}
+                      className="h-72 overflow-y-auto mb-4 space-y-3 pr-1 border border-gray-100 rounded-xl p-4 bg-gray-50"
+                    >
                       {chatMessages.map((msg, i) => (
                         <div key={i} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
                           <div className={`max-w-[80%] px-4 py-2.5 rounded-xl text-sm leading-relaxed ${
@@ -675,7 +669,6 @@ export default function ContactForm() {
                           </div>
                         </div>
                       )}
-                      <div ref={chatEndRef} />
                     </div>
                     <div className="flex gap-2">
                       <input type="text" value={chatInput} onChange={e => setChatInput(e.target.value)}
@@ -696,12 +689,7 @@ export default function ContactForm() {
                       Questions at 3am? No problem. Our AI chat agent can answer questions about bin sizes, move timing,
                       and pricing at any hour — no phone call required.
                     </p>
-                    <SharedFieldBlock
-                      shared={shared}
-                      errors={errors}
-                      onChange={handleSharedChange}
-                      inputCls={inputCls}
-                    />
+                    <SharedFieldBlock shared={shared} errors={errors} onChange={handleSharedChange} inputCls={inputCls} />
                     <A2PBlock
                       smsId="chat-sms" promoId="chat-promo"
                       smsChecked={chatAiData.agreeSMS} promoChecked={chatAiData.agreePromo}
