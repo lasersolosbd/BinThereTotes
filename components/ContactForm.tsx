@@ -312,10 +312,10 @@ export default function ContactForm() {
   )
 
   const tabs: { id: ViewState; topLabel: string; bottomLabel: string; icon: React.ReactNode }[] = [
-    { id: 'request', topLabel: 'Reserve',  bottomLabel: 'Bins Now',   icon: <Calendar className="h-5 w-5" /> },
-    { id: 'quote',   topLabel: 'Custom',   bottomLabel: 'Bin Order',  icon: <MessageSquare className="h-5 w-5" /> },
-    { id: 'voice',   topLabel: 'Talk',     bottomLabel: 'to AI',      icon: <Mic className="h-5 w-5" /> },
-    { id: 'chat',    topLabel: 'Chat',     bottomLabel: 'with AI',    icon: <Send className="h-5 w-5" /> },
+    { id: 'request', topLabel: 'Reserve',  bottomLabel: 'Bins Now',  icon: <Calendar className="h-5 w-5" /> },
+    { id: 'quote',   topLabel: 'Custom',   bottomLabel: 'Bin Order', icon: <MessageSquare className="h-5 w-5" /> },
+    { id: 'voice',   topLabel: 'Talk',     bottomLabel: 'to AI',     icon: <Mic className="h-5 w-5" /> },
+    { id: 'chat',    topLabel: 'Chat',     bottomLabel: 'with AI',   icon: <Send className="h-5 w-5" /> },
   ]
 
   return (
@@ -350,14 +350,17 @@ export default function ContactForm() {
           <div className="lg:col-span-8 bg-white rounded-2xl shadow-xl overflow-hidden p-6 md:p-10">
 
             {/* ── Segmented pill tab bar ── */}
-            <div className="flex gap-1 bg-gray-100/80 rounded-xl p-1 mb-8">
-              {tabs.map(tab => {
+            <div className="flex bg-gray-100/80 rounded-xl p-1 mb-8">
+              {tabs.map((tab, index) => {
                 const isActive = activeView === tab.id
+                const isLast = index === tabs.length - 1
+                const nextIsActive = index < tabs.length - 1 && activeView === tabs[index + 1].id
+
                 return (
                   <button
                     key={tab.id}
                     onClick={() => changeView(tab.id)}
-                    className="flex-1 flex flex-col items-center justify-center gap-1 py-2.5 px-1 rounded-lg transition-all duration-200"
+                    className="relative flex-1 flex flex-col items-center justify-center gap-1 py-2.5 px-1 rounded-lg transition-all duration-200"
                     style={isActive ? {
                       backgroundColor: '#ffffff',
                       border: '1px solid #E8561E',
@@ -367,18 +370,27 @@ export default function ContactForm() {
                       border: '1px solid transparent',
                     }}
                   >
+                    {/* Vertical divider — hidden on last tab and when adjacent to an active tab */}
+                    {!isLast && !isActive && !nextIsActive && (
+                      <span
+                        className="absolute right-0 top-1/2 -translate-y-1/2 w-px bg-gray-200"
+                        style={{ height: '55%' }}
+                        aria-hidden="true"
+                      />
+                    )}
+
                     <span
                       className="text-[9px] font-bold uppercase tracking-wider leading-tight"
-                      style={{ color: isActive ? '#E8561E' : '#475569' }}
+                      style={{ color: isActive ? '#E8561E' : '#374151' }}
                     >
                       {tab.topLabel}
                     </span>
-                    <span style={{ color: isActive ? '#E8561E' : '#475569' }}>
+                    <span style={{ color: isActive ? '#E8561E' : '#374151' }}>
                       {tab.icon}
                     </span>
                     <span
                       className="text-[9px] font-bold uppercase tracking-wider leading-tight"
-                      style={{ color: isActive ? '#E8561E' : '#475569' }}
+                      style={{ color: isActive ? '#E8561E' : '#374151' }}
                     >
                       {tab.bottomLabel}
                     </span>
