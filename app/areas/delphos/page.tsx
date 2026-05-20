@@ -1,75 +1,214 @@
+import type { Metadata } from 'next'
 import Header from '@/components/Header'
 import Footer from '@/components/Footer'
 import ContactForm from '@/components/ContactForm'
+import Script from 'next/script'
+import BinIcon from '@/components/BinIcon'
 import Link from 'next/link'
 
-export const metadata = {
-  title: 'Moving Bin Rentals Delphos, OH | Bin There Totes',
-  description: 'Rent eco-friendly, plastic moving totes in Delphos, OH. Serving the US-30 corridor with sanitized bin delivery and pickup. Skip the cardboard chaos!',
-  keywords: 'moving bins Delphos OH, plastic moving boxes Delphos, reusable totes Allen County, moving supplies Delphos Ohio',
+export const metadata: Metadata = {
+  title: 'Moving Bin & Box Rental in Delphos, OH | Bin There Totes',
+  description: 'Rent heavy-duty, waterproof moving bins in Delphos, OH (45833). Veteran-owned. Delivered and picked up. The smart cardboard box alternative for Allen and Van Wert County moves.',
+  keywords: [
+    'moving bin rental Delphos OH',
+    'moving boxes Delphos OH',
+    'heavy duty moving boxes Delphos',
+    'waterproof moving containers Delphos OH',
+    'moving dolly rental Delphos OH',
+    'cardboard box alternative Delphos OH',
+    'plastic moving totes Allen County',
+    'reusable moving bins 45833',
+    'moving bins Van Wert County',
+  ].join(', '),
+  alternates: {
+    canonical: 'https://www.bintheretotes.com/areas/delphos',
+  },
+  openGraph: {
+    title: 'Moving Bin & Box Rental in Delphos, OH | Bin There Totes',
+    description: 'Heavy-duty, waterproof moving bins delivered to your door in Delphos, OH. Veteran-owned. No cardboard, no tape, no store runs.',
+    url: 'https://www.bintheretotes.com/areas/delphos',
+    siteName: 'Bin There Totes',
+    locale: 'en_US',
+    type: 'website',
+  },
 }
+
+const faqSchema = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "Where can I rent moving boxes in Delphos, Ohio?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Bin There Totes offers reusable plastic moving bin rentals throughout Delphos, OH (zip code 45833). We deliver sanitized, heavy-duty bins directly to your home or office and pick them up when your move is complete — no store run required. We serve both the Allen and Van Wert County sides of Delphos."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Does Bin There Totes deliver to both the Allen and Van Wert sides of Delphos?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Yes. Our delivery and pickup services cover the entirety of Delphos regardless of which county line your residence falls on. We regularly service neighborhoods near the historic Miami-Erie Canal and commercial hubs along West 5th Street."
+      }
+    }
+  ]
+}
+
+const localFeatures: { title: string; body: string }[] = [
+  {
+    title: 'Zip Code 45833',
+    body: 'Full delivery and pickup coverage throughout Delphos, serving both Allen and Van Wert County residents.',
+  },
+  {
+    title: 'Heavy-Duty Bins',
+    body: 'Waterproof, stackable plastic bins that hold up to 65 lbs — far stronger than any cardboard box.',
+  },
+  {
+    title: 'Dolly Rental Add-On',
+    body: 'Add a moving dolly to any package. No separate rental trip — we bring it with your bins.',
+  },
+  {
+    title: 'Veteran-Owned & Operated',
+    body: 'Military precision on every delivery. Sanitized bins, on-time drop-off, professional pickup.',
+  },
+]
 
 export default function DelphosSilo() {
   return (
     <main className="min-h-screen bg-white">
+      <Script
+        id="delphos-faq-schema"
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
+        strategy="beforeInteractive"
+      />
+
       <Header />
-      
-      {/* Local Hero Section */}
-      <div className="bg-blue-600 pt-32 pb-20 relative">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h1 className="text-4xl font-extrabold text-white sm:text-5xl lg:text-6xl mb-6">
-            Moving in Delphos? <br /> Rent Your Totes Locally.
-          </h1>
-          <p className="mt-4 text-xl text-blue-100 max-w-3xl mx-auto">
-            We bring the "Done That" moving experience to the Canal City. Sanitized, stackable moving bins delivered directly to your door in Delphos and picked up when you're finished.
-          </p>
-          <div className="mt-10">
-            <Link href="/#packages" className="bg-orange-500 text-white px-8 py-4 rounded-lg font-bold text-lg hover:bg-orange-600 transition-colors shadow-lg">
-              See Rental Packages
-            </Link>
-          </div>
+
+      {/* Hero */}
+      <div className="bg-blue-600 pt-32 pb-20 text-center">
+        <BinIcon className="w-16 h-16 mx-auto mb-6" />
+        <p className="text-blue-200 text-sm font-bold uppercase tracking-widest mb-3">
+          Delphos, OH · Allen &amp; Van Wert County · Zip Code 45833
+        </p>
+        <h1 className="text-4xl font-extrabold text-white sm:text-6xl">
+          Moving Bin &amp; Box Rental Alternatives in Delphos, OH
+        </h1>
+        <p className="mt-4 text-xl text-blue-100 max-w-3xl mx-auto">
+          Heavy-duty, waterproof moving bins delivered to your door in the Canal City. The smarter cardboard box alternative for Delphos residents and businesses.
+        </p>
+        <div className="mt-10">
+          <Link
+            href="/#packages"
+            className="bg-orange-500 text-white px-8 py-4 rounded-lg font-bold text-lg hover:bg-orange-600 transition-colors shadow-lg"
+          >
+            See Rental Packages
+          </Link>
         </div>
       </div>
 
-      {/* AEO Geographic Content Section */}
-      <section className="max-w-4xl mx-auto px-4 py-20 sm:px-6 lg:px-8">
-        <div className="space-y-16">
-          
-          {/* AEO Block 1: Local Logistics */}
-          <div>
-            <h2 className="text-2xl font-bold text-gray-900 mb-4 text-pretty">
-              Where can I rent moving bins in Delphos, Ohio?
-            </h2>
-            <p className="text-lg text-gray-700 leading-relaxed">
-              Bin There Totes provides full-service moving bin rentals throughout Delphos, Ohio, including residential and commercial areas along the US-30 corridor. Our veteran-owned team delivers sanitized, heavy-duty plastic totes to your home or office on the Allen and Van Wert County border, providing a stress-free alternative to cardboard boxes.
-            </p>
+      {/* Feature Grid */}
+      <section className="bg-gray-50 border-b border-gray-100 py-12">
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            {localFeatures.map((f) => (
+              <div key={f.title} className="bg-white rounded-2xl border border-gray-200 p-6 shadow-sm">
+                <BinIcon className="w-8 h-8 mb-3" />
+                <p className="font-bold text-gray-900 text-sm mb-1">{f.title}</p>
+                <p className="text-gray-500 text-xs leading-relaxed">{f.body}</p>
+              </div>
+            ))}
           </div>
-
-          {/* AEO Block 2: Service Area Specifics */}
-          <div>
-            <h2 className="text-2xl font-bold text-gray-900 mb-4 text-pretty">
-              Does Bin There Totes deliver to both the Allen and Van Wert sides of Delphos?
-            </h2>
-            <p className="text-lg text-gray-700 leading-relaxed">
-              Yes, our delivery and pickup services cover the entirety of Delphos, regardless of which county line your residence falls on. We regularly service neighborhoods near the historic Miami-Erie Canal and the commercial hubs along West 5th Street, ensuring every Delphos resident has access to eco-friendly moving supplies.
-            </p>
-          </div>
-
-          {/* AEO Block 3: The Value Prop */}
-          <div className="bg-gray-50 p-8 rounded-2xl border border-gray-100 shadow-sm">
-            <h3 className="text-xl font-bold text-gray-900 mb-4">Why Delphos Chooses Reusable Totes:</h3>
-            <ul className="grid grid-cols-1 md:grid-cols-2 gap-4 text-gray-600">
-              <li className="flex items-center gap-2"><span className="text-orange-500 font-bold">â</span> <strong>Weather Proof:</strong> No soggy cardboard in Ohio rain.</li>
-              <li className="flex items-center gap-2"><span className="text-orange-500 font-bold">â</span> <strong>Stackable:</strong> Maximize space in your moving truck.</li>
-              <li className="flex items-center gap-2"><span className="text-orange-500 font-bold">â</span> <strong>Sanitized:</strong> Every bin is deep-cleaned before delivery.</li>
-              <li className="flex items-center gap-2"><span className="text-orange-500 font-bold">â</span> <strong>Zero Waste:</strong> No boxes to break down or recycle.</li>
-            </ul>
-          </div>
-
         </div>
       </section>
 
-      {/* Lead Capture */}
+      {/* Main Content */}
+      <section className="max-w-4xl mx-auto px-4 py-16 space-y-14">
+
+        <div>
+          <h2 className="text-2xl font-bold text-gray-900 mb-4">
+            Where can I rent moving boxes in Delphos, Ohio?
+          </h2>
+          <p className="text-lg text-gray-700 leading-relaxed">
+            Bin There Totes is Delphos&apos;s local moving bin rental service, delivering sanitized,
+            heavy-duty plastic bins directly to homes and businesses throughout zip code <strong>45833</strong>.
+            Delphos sits uniquely on the <strong>Allen and Van Wert County</strong> border — and we
+            serve both sides. Whether you&apos;re relocating near the historic <strong>Miami-Erie Canal</strong>,
+            moving along <strong>West 5th Street</strong>, or transitioning near the
+            <strong> Jefferson Street</strong> downtown corridor, we drop off clean bins on your
+            schedule and pick them up when you&apos;re done.
+          </p>
+          <p className="text-lg text-gray-700 leading-relaxed mt-4">
+            Unlike cardboard moving boxes — which require a store run, tape, and assembly — our bins
+            arrive ready to pack. No hunting for packing supplies. No boxes that collapse under weight
+            or absorb moisture on a rainy Ohio moving day. Just durable, waterproof containers that
+            stack cleanly and protect your belongings from pickup to drop-off.
+          </p>
+        </div>
+
+        <div>
+          <h2 className="text-2xl font-bold text-gray-900 mb-4">
+            Serving Every Neighborhood in Delphos, OH
+          </h2>
+          <p className="text-lg text-gray-700 leading-relaxed">
+            Delphos is a tight-knit community and we treat every delivery that way. Our routing runs
+            along the <strong>US-30 corridor</strong> connecting Delphos to Lima, which means we reach
+            any Delphos address efficiently. We serve the historic neighborhoods near the
+            <strong> Miami-Erie Canal Commission</strong> area, residential streets on both the Allen
+            and Van Wert county sides, and commercial properties throughout the city.
+          </p>
+          <p className="text-lg text-gray-700 leading-relaxed mt-4">
+            We handle residential moves, apartment transitions, senior relocations, and commercial
+            office moves throughout Delphos and the surrounding corridor. Not sure if your address
+            is in our zone? Call us at{' '}
+            <a href="tel:+15673200620" className="text-blue-600 font-bold hover:underline">
+              (567) 320-0620
+            </a>{' '}
+            and we&apos;ll confirm same-day.
+          </p>
+        </div>
+
+        <div>
+          <h2 className="text-2xl font-bold text-gray-900 mb-4">
+            Are Plastic Moving Bins Better Than Cardboard Boxes?
+          </h2>
+          <p className="text-lg text-gray-700 leading-relaxed">
+            For most Delphos moves, yes. Our bins are a direct <strong>cardboard box alternative</strong> built
+            for real-world moving conditions. Each bin holds up to <strong>65 pounds</strong>, features
+            comfortable side handles, and locks securely when stacked — no tape required. They&apos;re
+            waterproof, so an unpredictable Ohio moving day won&apos;t damage your belongings the way
+            a soggy cardboard box would.
+          </p>
+          <p className="text-lg text-gray-700 leading-relaxed mt-4">
+            Add a <strong>moving dolly rental</strong> to any package and your bins roll smoothly from
+            room to truck without straining your back. We bring the dolly with your bin delivery — no
+            separate trip to a hardware store required. When the move is complete, we pick everything
+            up. No breaking down boxes, no recycling run, no mess.
+          </p>
+        </div>
+
+        <div className="bg-blue-50 border border-blue-200 rounded-2xl p-8 text-center">
+          <h3 className="text-xl font-extrabold text-gray-900 mb-2">
+            Ready to move smarter in Delphos?
+          </h3>
+          <p className="text-gray-600 mb-6">
+            Fill out the form below for a custom quote, or call us directly at{' '}
+            <a href="tel:+15673200620" className="text-blue-600 font-bold hover:underline">
+              (567) 320-0620
+            </a>.
+          </p>
+          <a
+            href="#contact"
+            className="inline-block bg-blue-600 text-white font-bold px-8 py-3 rounded-xl hover:bg-blue-700 transition-colors"
+          >
+            Get My Free Quote
+          </a>
+        </div>
+
+      </section>
+
       <ContactForm />
       <Footer />
     </main>
