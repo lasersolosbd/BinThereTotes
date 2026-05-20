@@ -27,6 +27,20 @@ export const metadata: Metadata = {
     siteName: 'Bin There Totes',
     locale: 'en_US',
     type: 'website',
+    images: [
+      {
+        url: 'https://www.bintheretotes.com/hero-bins.webp',
+        width: 1200,
+        height: 630,
+        alt: 'Bin There Totes - Reusable Moving Bin Rentals in Lima, OH',
+      },
+    ],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Bin There Totes - Reusable Moving Bin Rentals | Lima, OH',
+    description: 'Veteran-owned, eco-friendly moving bin rentals in Lima, OH. Skip the cardboard chaos.',
+    images: ['https://www.bintheretotes.com/hero-bins.webp'],
   },
   alternates: {
     canonical: 'https://www.bintheretotes.com',
@@ -50,6 +64,7 @@ export default function RootLayout({
     "url": "https://www.bintheretotes.com",
     "telephone": "+15673200620",
     "email": "info@bintheretotes.com",
+    "image": "https://www.bintheretotes.com/hero-bins.webp",
     "address": {
       "@type": "PostalAddress",
       "streetAddress": "1401 N West St",
@@ -133,7 +148,7 @@ export default function RootLayout({
     "sameAs": [
       "https://www.yelp.com/biz/bin-there-totes-lima"
     ]
-  };
+  }
 
   return (
     <html lang="en">
