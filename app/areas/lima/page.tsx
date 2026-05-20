@@ -191,7 +191,7 @@ export default function LimaSilo() {
             </a>.
           </p>
           
-            href="#contact"
+            <a href="#contact"
             className="inline-block bg-blue-600 text-white font-bold px-8 py-3 rounded-xl hover:bg-blue-700 transition-colors"
           >
             Get My Free Quote
