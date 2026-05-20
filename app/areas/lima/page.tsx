@@ -7,13 +7,13 @@ import BinIcon from '@/components/BinIcon'
 
 export const metadata: Metadata = {
   title: 'Moving Bin & Box Rental in Lima, OH | Bin There Totes',
-  description: 'Rent heavy-duty, waterproof moving bins in Lima, OH (45801, 45804, 45805). Veteran-owned. Delivered and picked up. The smart cardboard box alternative for Allen County moves.',
+  description: 'Rent heavy-duty, water resistant moving bins in Lima, OH (45801, 45804, 45805). Veteran-owned. Delivered and picked up. The smart cardboard box alternative for Allen County moves.',
   keywords: [
     'moving bin rental Lima OH',
     'moving boxes Lima OH',
     'moving box rental Lima Ohio',
     'heavy duty moving boxes Lima',
-    'waterproof moving containers Lima OH',
+    'water resistant moving containers Lima OH',
     'moving dolly rental Lima OH',
     'cardboard box alternative Lima OH',
     'plastic moving totes Allen County',
@@ -24,7 +24,7 @@ export const metadata: Metadata = {
   },
   openGraph: {
     title: 'Moving Bin & Box Rental in Lima, OH | Bin There Totes',
-    description: 'Heavy-duty, waterproof moving bins delivered to your door in Lima, OH. Veteran-owned. No cardboard, no tape, no store runs.',
+    description: 'Heavy-duty, water resistant moving bins delivered to your door in Lima, OH. Veteran-owned. No cardboard, no tape, no store runs.',
     url: 'https://www.bintheretotes.com/areas/lima',
     siteName: 'Bin There Totes',
     locale: 'en_US',
@@ -49,7 +49,7 @@ const faqSchema = {
       "name": "Are plastic moving bins better than cardboard boxes for a Lima move?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "Yes. Our waterproof plastic moving bins are sturdier than cardboard boxes, hold up to 65 lbs each, and stack securely on a dolly. They won't collapse, tear, or absorb moisture — making them the preferred cardboard box alternative for Lima, OH residents and businesses."
+        "text": "Yes. Our water resistant plastic moving bins are sturdier than cardboard boxes, hold up to 65 lbs each, and stack securely on a dolly. They won't collapse, tear, or absorb moisture — making them the preferred cardboard box alternative for Lima, OH residents and businesses."
       }
     }
   ]
@@ -62,7 +62,7 @@ const localFeatures: { title: string; body: string }[] = [
   },
   {
     title: 'Heavy-Duty Bins',
-    body: 'Waterproof, stackable plastic bins that hold up to 65 lbs — far stronger than any cardboard box.',
+    body: 'Water resistant, stackable plastic bins that hold up to 65 lbs — far stronger than any cardboard box.',
   },
   {
     title: 'Dolly Rental Add-On',
@@ -96,7 +96,7 @@ export default function LimaSilo() {
           Moving Bin &amp; Box Rental Alternatives in Lima, OH
         </h1>
         <p className="mt-4 text-xl text-blue-100 max-w-3xl mx-auto">
-          Heavy-duty, waterproof moving bins delivered to your door. The smarter cardboard box alternative for Lima residents and businesses.
+          Heavy-duty, water resistant moving bins delivered to your door. The smarter cardboard box alternative for Lima residents and businesses.
         </p>
       </div>
 
@@ -133,7 +133,7 @@ export default function LimaSilo() {
           <p className="text-lg text-gray-700 leading-relaxed mt-4">
             Unlike cardboard moving boxes — which require a store run, tape, and assembly — our bins
             arrive ready to pack. No hunting for packing supplies. No boxes that collapse under weight
-            or absorb moisture on a rainy Lima moving day. Just durable, waterproof containers that
+            or absorb moisture on a rainy Lima moving day. Just durable, water resistant containers that
             stack cleanly and protect your belongings from pickup to drop-off.
           </p>
         </div>
@@ -169,7 +169,7 @@ export default function LimaSilo() {
             For most Lima moves, yes. Our bins are a direct cardboard box alternative built for
             real-world moving conditions. Each bin holds up to <strong>65 pounds</strong>, features
             comfortable side handles, and locks securely when stacked — no tape required. They&apos;re
-            waterproof, so a rainy moving day in Allen County won&apos;t damage your belongings the
+            water resistant, so a rainy moving day in Allen County won&apos;t damage your belongings the
             way a soggy cardboard box would.
           </p>
           <p className="text-lg text-gray-700 leading-relaxed mt-4">

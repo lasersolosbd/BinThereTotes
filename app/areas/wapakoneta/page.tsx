@@ -8,12 +8,12 @@ import Link from 'next/link'
 
 export const metadata: Metadata = {
   title: 'Moving Bin & Box Rental in Wapakoneta, OH | Bin There Totes',
-  description: 'Rent heavy-duty, waterproof moving bins in Wapakoneta, OH (45895). Veteran-owned. Delivered and picked up. The smart cardboard box alternative for Auglaize County moves.',
+  description: 'Rent heavy-duty, water resistant moving bins in Wapakoneta, OH (45895). Veteran-owned. Delivered and picked up. The smart cardboard box alternative for Auglaize County moves.',
   keywords: [
     'moving bin rental Wapakoneta OH',
     'moving boxes Wapakoneta OH',
     'heavy duty moving boxes Wapakoneta',
-    'waterproof moving containers Wapakoneta OH',
+    'water resistant moving containers Wapakoneta OH',
     'moving dolly rental Wapakoneta OH',
     'cardboard box alternative Wapakoneta OH',
     'plastic moving totes Auglaize County',
@@ -25,7 +25,7 @@ export const metadata: Metadata = {
   },
   openGraph: {
     title: 'Moving Bin & Box Rental in Wapakoneta, OH | Bin There Totes',
-    description: 'Heavy-duty, waterproof moving bins delivered to your door in Wapakoneta, OH. Veteran-owned. No cardboard, no tape, no store runs.',
+    description: 'Heavy-duty, water resistant moving bins delivered to your door in Wapakoneta, OH. Veteran-owned. No cardboard, no tape, no store runs.',
     url: 'https://www.bintheretotes.com/areas/wapakoneta',
     siteName: 'Bin There Totes',
     locale: 'en_US',
@@ -63,7 +63,7 @@ const localFeatures: { title: string; body: string }[] = [
   },
   {
     title: 'Heavy-Duty Bins',
-    body: 'Waterproof, stackable plastic bins that hold up to 65 lbs — far stronger than any cardboard box.',
+    body: 'Water resistant, stackable plastic bins that hold up to 65 lbs — far stronger than any cardboard box.',
   },
   {
     title: 'Dolly Rental Add-On',
@@ -97,7 +97,7 @@ export default function WapakonetaSilo() {
           Moving Bin &amp; Box Rental Alternatives in Wapakoneta, OH
         </h1>
         <p className="mt-4 text-xl text-blue-100 max-w-3xl mx-auto">
-          Heavy-duty, waterproof moving bins delivered to your door in Wapak. The smarter cardboard box alternative for Auglaize County residents and businesses.
+          Heavy-duty, water resistant moving bins delivered to your door in Wapak. The smarter cardboard box alternative for Auglaize County residents and businesses.
         </p>
         <div className="mt-10">
           <Link
@@ -142,7 +142,7 @@ export default function WapakonetaSilo() {
           <p className="text-lg text-gray-700 leading-relaxed mt-4">
             Unlike cardboard moving boxes — which require a store run, tape, and assembly — our bins
             arrive ready to pack. No hunting for packing supplies. No boxes that collapse under weight
-            or absorb moisture on a rainy Ohio moving day. Just durable, waterproof containers that
+            or absorb moisture on a rainy Ohio moving day. Just durable, water resistant containers that
             stack cleanly and protect your belongings from pickup to drop-off.
           </p>
         </div>
@@ -178,7 +178,7 @@ export default function WapakonetaSilo() {
             For most Wapakoneta moves, yes. Our bins are a direct <strong>cardboard box alternative</strong> built
             for real-world moving conditions. Each bin holds up to <strong>65 pounds</strong>, features
             comfortable side handles, and locks securely when stacked — no tape required. They&apos;re
-            waterproof, so an unpredictable Ohio moving day won&apos;t damage your belongings the way
+            water resistant, so an unpredictable Ohio moving day won&apos;t damage your belongings the way
             a soggy cardboard box would.
           </p>
           <p className="text-lg text-gray-700 leading-relaxed mt-4">

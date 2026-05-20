@@ -17,7 +17,7 @@ export const metadata: Metadata = {
     'veteran-owned moving supplies',
     'packing supplies Lima OH',
     'commercial office moves Lima OH',
-    'waterproof moving containers',
+    'water resistant moving containers',
     'heavy duty moving boxes Lima OH',
   ].join(', '),
   openGraph: {

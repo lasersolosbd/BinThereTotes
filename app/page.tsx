@@ -87,7 +87,7 @@ export default function Home() {
               <p className="text-gray-700 text-lg leading-relaxed">
                 Why spend the money — and the afternoon — tracking down moving boxes, building them,
                 taping them shut, and then breaking them all down just to find somewhere to recycle
-                them? <strong><em>Bin There Totes</em></strong> delivers waterproof, stackable plastic
+                them? <strong><em>Bin There Totes</em></strong> delivers water resistant, stackable plastic
                 bins straight to your door — a smarter <strong>cardboard box alternative</strong> that
                 won&apos;t collapse mid-move. No tape. No assembly. No trip to the store for{' '}
                 <strong>packing supplies</strong>.
@@ -114,7 +114,7 @@ export default function Home() {
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 2C12 2 5 10 5 14a7 7 0 0014 0c0-4-7-12-7-12z" />
                     </svg>
                   ),
-                  label: 'Waterproof',
+                  label: 'Water resistant',
                   sub: 'Weatherproof plastic shell',
                 },
                 {
