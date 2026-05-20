@@ -1,40 +1,48 @@
 'use client'
 
 import { useState } from 'react'
-import { ChevronDown } from 'lucide-react'
+import { ChevronDown, Package } from 'lucide-react'
 
 const FAQS = [
   {
     question: 'Where can I rent moving boxes in Lima, OH?',
-    answer: 'Bin There Totes offers reusable plastic moving bin rentals throughout Lima, OH and surrounding areas. We deliver and pick up right at your door, making the process incredibly convenient. No need to visit a store or deal with cardboard boxes.',
+    answer: 'Bin There Totes offers reusable plastic moving bin rentals throughout Lima, OH and surrounding areas. We deliver sanitized bins directly to your door and pick them up when your move is complete — no store visit required. Our service covers Lima and all of Allen County.',
+    detail: 'No need to hunt down cardboard boxes, buy tape, or figure out what to do with the mess afterward. We drop off clean, stackable bins on your schedule and handle pickup when you\'re done. It\'s the simplest way to move in the Lima area.',
   },
   {
     question: 'Are plastic moving bins cheaper than cardboard?',
-    answer: 'Yes! When you factor in the cost of purchasing cardboard boxes, packing tape, and the time spent assembling them, our reusable bins are more cost-effective. Plus, you don\'t have to worry about boxes falling apart or needing reinforcement. Our bins are also better for the environment.',
+    answer: 'Yes. When you add up the cost of cardboard boxes, packing tape, and the time spent assembling and disposing of them, our reusable bin rentals are more cost-effective for most moves. There\'s no tape to buy, no boxes to break down, and no recycling run at the end.',
+    detail: 'Our bins also won\'t fall apart mid-move the way wet or overloaded cardboard can. You get a fixed rental price, a set number of bins, and zero hidden supply costs — making budgeting for your move straightforward from the start.',
   },
   {
     question: 'How long can I keep the bins?',
-    answer: 'Our standard rental period is 2 weeks, which gives you plenty of time to pack at your own pace. Need more time? No problem! We offer flexible extensions. Just let us know and we\'ll work with your schedule.',
+    answer: 'Our standard rental period is 2 weeks, giving you plenty of time to pack at your own pace. If you need more time, we offer flexible extensions — just let us know before your pickup date and we\'ll adjust your schedule at no hassle.',
+    detail: 'Two weeks covers the vast majority of residential moves, including time to pack, move, and unpack before we retrieve the bins. For larger moves, office relocations, or staged transitions, extended rentals are available — contact us to discuss your timeline.',
   },
   {
     question: 'What size are the bins?',
-    answer: 'Our bins are Bottom Exterior Dimensions: Length: 18.6" x Width: 12.75" x Height: 12.9" Bottom Interior Dimensions: Length: 18" x Width: 12" x Height: 12.25" - the perfect size for most household items. They\'re stackable, have comfortable handles, and hold up to 65 pounds each. Unlike cardboard boxes, they won\'t collapse or tear.',
+    answer: 'Our bins have exterior dimensions of 18.6" L × 12.75" W × 12.9" H, with interior dimensions of 18" L × 12" W × 12.25" H. They hold up to 65 pounds each, stack securely, and have comfortable side handles for easy carrying.',
+    detail: 'This size works well for books, kitchen items, clothing, and most household goods. Unlike cardboard boxes, our bins won\'t buckle under weight or collapse when stacked — making loading a truck faster and safer. They\'re also uniform in size, so they stack cleanly in any moving vehicle.',
   },
   {
     question: 'Do you deliver and pick up?',
-    answer: 'Absolutely! We handle both delivery and pickup. Just schedule your delivery date when booking, and when you\'re done with your move, give us a call to schedule pickup. We\'ll come grab the bins from wherever you\'ve moved to in the Lima area.',
+    answer: 'Yes — delivery and pickup are both included with every rental. You schedule your delivery date when booking, pack at your pace, and call us when you\'re ready for pickup. We\'ll retrieve the bins from your new location anywhere in our service area.',
+    detail: 'There\'s no need to transport bins yourself or return them to a store. We handle the full logistics so you can focus on your move. Delivery windows are scheduled to fit your timeline, not ours.',
   },
   {
     question: 'What if I need more bins mid-move?',
-    answer: 'No worries! Just give us a call and we can deliver additional bins within 24 hours. We understand that moving needs can change, and we\'re here to help you adjust on the fly.',
+    answer: 'Just give us a call and we can deliver additional bins within 24 hours. Moving needs change, and we\'re built to be flexible. There\'s no penalty for adding bins — we\'ll quote you the additional cost and get them out to you quickly.',
+    detail: 'It\'s common for customers to underestimate bin count, especially for kitchens, garages, or storage areas. We\'d rather you have what you need than scramble mid-move. When in doubt, we can also help you estimate the right package size before your delivery date.',
   },
   {
     question: 'Are the bins clean?',
-    answer: 'Absolutely. Every bin is thoroughly cleaned and sanitized between rentals. We take pride in delivering spotless bins - it\'s part of our military precision and attention to detail.',
+    answer: 'Yes. Every bin is thoroughly cleaned and sanitized between rentals before it\'s delivered to you. We inspect each bin for damage and cleanliness as part of our standard process — you will never receive a dirty or compromised bin.',
+    detail: 'Cleanliness is part of our military-precision approach to operations. We treat every delivery like it matters, because it does. If a bin ever arrives in a condition you\'re not satisfied with, call us immediately and we\'ll make it right.',
   },
   {
     question: 'Can I use these bins for storage?',
-    answer: 'While our bins are designed for moving, some customers do use them for short-term storage during transitions. Contact us to discuss longer rental periods if you need storage solutions.',
+    answer: 'Our bins are designed for moving, but some customers use them for short-term storage during transitions. Extended rental periods for storage purposes are available — contact us to discuss pricing and availability for longer-term use.',
+    detail: 'If you\'re between homes, staging a renovation, or need temporary storage while settling in, our bins can bridge that gap. Reach out before your pickup date and we\'ll work out an arrangement that fits your situation.',
   },
 ]
 
@@ -74,15 +82,18 @@ export default function FAQ() {
                   }`}
                 />
               </button>
-              
+
               <div
                 className={`overflow-hidden transition-all duration-300 ${
                   openIndex === index ? 'max-h-96' : 'max-h-0'
                 }`}
               >
-                <div className="px-6 pb-6">
-                  <p className="text-gray-600 leading-relaxed">
+                <div className="px-6 pb-6 space-y-3">
+                  <p className="text-gray-700 leading-relaxed font-medium">
                     {faq.answer}
+                  </p>
+                  <p className="text-gray-500 leading-relaxed text-sm">
+                    {faq.detail}
                   </p>
                 </div>
               </div>
@@ -96,16 +107,16 @@ export default function FAQ() {
             Still have questions?
           </h3>
           <p className="text-cool-100 mb-6">
-            We're here to help! Give us a call or send us a message.
+            We&apos;re here to help! Give us a call or send us a message.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <a
-              href="tel:+15678251714"
+            
+              href="tel:+15673200620"
               className="bg-orange hover:bg-orange-dark text-white font-semibold px-8 py-3 rounded-lg transition-all duration-300 transform hover:scale-105"
             >
               Call (567) 320-0620
             </a>
-            <a
+            
               href="#contact"
               className="bg-white text-navy hover:bg-cool-50 font-semibold px-8 py-3 rounded-lg transition-all duration-300"
             >
