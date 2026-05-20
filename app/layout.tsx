@@ -3,17 +3,33 @@ import './globals.css'
 import Script from 'next/script'
 
 export const metadata: Metadata = {
-  metadataBase: new URL('https://bin-there-totes.vercel.app'),
+  metadataBase: new URL('https://www.bintheretotes.com'),
   title: 'Bin There Totes - Reusable Moving Bin Rentals | Lima, OH',
   description: 'Veteran-owned, eco-friendly moving bin rentals in Lima, OH. Skip the cardboard chaos. Rent stackable plastic totes, pack, and we pick up. Join the Done That club!',
-  keywords: 'moving bins Lima OH, plastic moving boxes, reusable moving totes, eco-friendly moving, veteran-owned moving supplies, commercial office moves',
+  keywords: [
+    'moving bins Lima OH',
+    'moving boxes Lima OH',
+    'plastic moving boxes',
+    'reusable moving totes',
+    'cardboard box alternatives',
+    'moving dolly rental Lima OH',
+    'eco-friendly moving',
+    'veteran-owned moving supplies',
+    'packing supplies Lima OH',
+    'commercial office moves Lima OH',
+    'waterproof moving containers',
+    'heavy duty moving boxes Lima OH',
+  ].join(', '),
   openGraph: {
     title: 'Bin There Totes - Reusable Moving Bin Rentals | Lima, OH',
     description: 'Veteran-owned, eco-friendly moving bin rentals in Lima, OH. Skip the cardboard chaos.',
-    url: 'https://bin-there-totes.vercel.app',
+    url: 'https://www.bintheretotes.com',
     siteName: 'Bin There Totes',
     locale: 'en_US',
     type: 'website',
+  },
+  alternates: {
+    canonical: 'https://www.bintheretotes.com',
   },
   robots: {
     index: true,
@@ -28,29 +44,95 @@ export default function RootLayout({
 }) {
   const jsonLd = {
     "@context": "https://schema.org",
-    "@type": "MovingCompany",
+    "@type": ["LocalBusiness", "RentalService"],
     "name": "Bin There Totes",
-    "description": "Eco-friendly, sanitized plastic moving bin rentals in Lima and Allen County, Ohio.",
-    "url": "https://bin-there-totes.vercel.app",
-    "telephone": "+15678251714",
+    "description": "Veteran-owned, eco-friendly reusable plastic moving bin and dolly rentals in Lima and Allen County, Ohio. Delivered and picked up on your schedule.",
+    "url": "https://www.bintheretotes.com",
+    "telephone": "+15673200620",
+    "email": "info@bintheretotes.com",
     "address": {
       "@type": "PostalAddress",
+      "streetAddress": "1401 N West St",
       "addressLocality": "Lima",
       "addressRegion": "OH",
       "postalCode": "45801",
       "addressCountry": "US"
     },
+    "geo": {
+      "@type": "GeoCoordinates",
+      "latitude": 40.7448,
+      "longitude": -84.1052
+    },
     "areaServed": [
-      { "@type": "City", "name": "Lima" },
+      { "@type": "City", "name": "Lima", "sameAs": "https://en.wikipedia.org/wiki/Lima,_Ohio" },
       { "@type": "City", "name": "Delphos" },
       { "@type": "City", "name": "Bluffton" },
       { "@type": "City", "name": "Wapakoneta" },
-      { "@type": "County", "name": "Allen County" }
+      { "@type": "AdministrativeArea", "name": "Allen County", "addressRegion": "OH" }
     ],
+    "hasOfferCatalog": {
+      "@type": "OfferCatalog",
+      "name": "Moving Bin & Dolly Rental Packages",
+      "itemListElement": [
+        {
+          "@type": "Offer",
+          "itemOffered": {
+            "@type": "Service",
+            "name": "1-Bedroom Moving Bin Rental",
+            "description": "15 reusable plastic moving bins, delivered and picked up."
+          },
+          "price": "149.00",
+          "priceCurrency": "USD"
+        },
+        {
+          "@type": "Offer",
+          "itemOffered": {
+            "@type": "Service",
+            "name": "2-Bedroom Moving Bin Rental",
+            "description": "35 reusable plastic moving bins, delivered and picked up."
+          },
+          "price": "229.00",
+          "priceCurrency": "USD"
+        },
+        {
+          "@type": "Offer",
+          "itemOffered": {
+            "@type": "Service",
+            "name": "3-Bedroom Moving Bin Rental",
+            "description": "50 reusable plastic moving bins, delivered and picked up."
+          },
+          "price": "329.00",
+          "priceCurrency": "USD"
+        },
+        {
+          "@type": "Offer",
+          "itemOffered": {
+            "@type": "Service",
+            "name": "4-5 Bedroom Moving Bin Rental",
+            "description": "75 reusable plastic moving bins, delivered and picked up."
+          },
+          "price": "429.00",
+          "priceCurrency": "USD"
+        },
+        {
+          "@type": "Offer",
+          "itemOffered": {
+            "@type": "Service",
+            "name": "Moving Dolly Rental",
+            "description": "Add-on dolly rental available with any bin package for easy loading and transport."
+          }
+        }
+      ]
+    },
     "founder": {
       "@type": "Person",
       "name": "Mike Sheets"
-    }
+    },
+    "foundingDate": "2024",
+    "slogan": "Bin There, Done That",
+    "sameAs": [
+      "https://www.yelp.com/biz/bin-there-totes-lima"
+    ]
   };
 
   return (
