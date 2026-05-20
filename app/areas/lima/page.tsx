@@ -3,6 +3,7 @@ import Header from '@/components/Header'
 import Footer from '@/components/Footer'
 import ContactForm from '@/components/ContactForm'
 import Script from 'next/script'
+import BinIcon from '@/components/BinIcon'
 
 export const metadata: Metadata = {
   title: 'Moving Bin & Box Rental in Lima, OH | Bin There Totes',
@@ -54,48 +55,26 @@ const faqSchema = {
   ]
 }
 
+const localFeatures: { title: string; body: string }[] = [
+  {
+    title: 'All Lima Zip Codes',
+    body: 'We serve 45801, 45804, and 45805 — every corner of Lima and the Allen County surrounding area.',
+  },
+  {
+    title: 'Heavy-Duty Bins',
+    body: 'Waterproof, stackable plastic bins that hold up to 65 lbs — far stronger than any cardboard box.',
+  },
+  {
+    title: 'Dolly Rental Add-On',
+    body: 'Add a moving dolly to any package. No separate rental trip — we bring it with your bins.',
+  },
+  {
+    title: 'Veteran-Owned & Operated',
+    body: 'Military precision on every delivery. Sanitized bins, on-time drop-off, professional pickup.',
+  },
+]
+
 export default function LimaSilo() {
-
-  const localFeatures = [
-    {
-      icon: (
-        <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-        </svg>
-      ),
-      title: 'All Lima Zip Codes',
-      body: 'We serve 45801, 45804, and 45805 — every corner of Lima and the Allen County surrounding area.',
-    },
-    {
-      icon: (
-        <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10" />
-        </svg>
-      ),
-      title: 'Heavy-Duty Bins',
-      body: 'Waterproof, stackable plastic bins that hold up to 65 lbs — far stronger than any cardboard box.',
-    },
-    {
-      icon: (
-        <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 17V7m0 10a2 2 0 01-2 2H5a2 2 0 01-2-2V7a2 2 0 012-2h2a2 2 0 012 2m0 10a2 2 0 002 2h2a2 2 0 002-2M9 7a2 2 0 012-2h2a2 2 0 012 2m0 10V7" />
-        </svg>
-      ),
-      title: 'Dolly Rental Add-On',
-      body: 'Add a moving dolly to any package. No separate rental trip — we bring it with your bins.',
-    },
-    {
-      icon: (
-        <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
-        </svg>
-      ),
-      title: 'Veteran-Owned & Operated',
-      body: 'Military precision on every delivery. Sanitized bins, on-time drop-off, professional pickup.',
-    },
-  ]
-
   return (
     <main className="min-h-screen bg-white">
       <Script
@@ -109,6 +88,7 @@ export default function LimaSilo() {
 
       {/* Hero */}
       <div className="bg-blue-600 pt-32 pb-20 text-center">
+        <BinIcon className="w-16 h-16 mx-auto mb-6" />
         <p className="text-blue-200 text-sm font-bold uppercase tracking-widest mb-3">
           Lima, OH · Allen County · Zip Codes 45801, 45804, 45805
         </p>
@@ -126,7 +106,7 @@ export default function LimaSilo() {
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
             {localFeatures.map((f) => (
               <div key={f.title} className="bg-white rounded-2xl border border-gray-200 p-6 shadow-sm">
-                <div className="text-blue-600 mb-3">{f.icon}</div>
+                <BinIcon className="w-8 h-8 mb-3" />
                 <p className="font-bold text-gray-900 text-sm mb-1">{f.title}</p>
                 <p className="text-gray-500 text-xs leading-relaxed">{f.body}</p>
               </div>
@@ -138,7 +118,6 @@ export default function LimaSilo() {
       {/* Main Content */}
       <section className="max-w-4xl mx-auto px-4 py-16 space-y-14">
 
-        {/* FAQ Block 1 */}
         <div>
           <h2 className="text-2xl font-bold text-gray-900 mb-4">
             Where can I rent moving boxes in Lima, Ohio?
@@ -159,7 +138,6 @@ export default function LimaSilo() {
           </p>
         </div>
 
-        {/* Local Context Block */}
         <div>
           <h2 className="text-2xl font-bold text-gray-900 mb-4">
             Serving Every Neighborhood in Lima, OH
@@ -183,7 +161,6 @@ export default function LimaSilo() {
           </p>
         </div>
 
-        {/* Cardboard Alternative Block */}
         <div>
           <h2 className="text-2xl font-bold text-gray-900 mb-4">
             Are Plastic Moving Bins Better Than Cardboard Boxes?
@@ -203,7 +180,6 @@ export default function LimaSilo() {
           </p>
         </div>
 
-        {/* CTA Nudge */}
         <div className="bg-blue-50 border border-blue-200 rounded-2xl p-8 text-center">
           <h3 className="text-xl font-extrabold text-gray-900 mb-2">
             Ready to move smarter in Lima?
