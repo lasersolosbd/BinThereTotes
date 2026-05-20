@@ -9,6 +9,7 @@ import ContactForm from '@/components/ContactForm'
 import Footer from '@/components/Footer'
 import Link from 'next/link'
 import { GoogleMap, useJsApiLoader, Marker, InfoWindow } from '@react-google-maps/api'
+import BinIcon from '@/components/BinIcon'
 
 // Exact GPS Coordinates for the Geographic Silos
 const serviceAreas = [
@@ -84,10 +85,12 @@ export default function Home() {
                 Skip the Cardboard. Rent Heavy-Duty Moving Bins Instead.
               </h2>
               <p className="text-gray-700 text-lg leading-relaxed">
-                Tired of searching for <strong>moving boxes in Lima, OH</strong>? Bin There Totes delivers
-                waterproof, stackable plastic bins straight to your door — a smarter cardboard box
-                alternative that won&apos;t collapse mid-move. No tape. No assembly. No trip to the store
-                for packing supplies.
+                Why spend the money — and the afternoon — tracking down moving boxes, building them,
+                taping them shut, and then breaking them all down just to find somewhere to recycle
+                them? <strong><em>Bin There Totes</em></strong> delivers waterproof, stackable plastic
+                bins straight to your door — a smarter <strong>cardboard box alternative</strong> that
+                won&apos;t collapse mid-move. No tape. No assembly. No trip to the store for{' '}
+                <strong>packing supplies</strong>.
               </p>
               <p className="text-gray-600 mt-4 leading-relaxed">
                 Our bins are heavier-duty than anything you&apos;ll find on a store shelf, hold up to 65 lbs
@@ -101,18 +104,14 @@ export default function Home() {
             <div className="grid grid-cols-2 gap-4">
               {[
                 {
-                  icon: (
-                    <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10" />
-                    </svg>
-                  ),
+                  icon: <BinIcon className="w-6 h-6" />,
                   label: 'Heavy-Duty Bins',
                   sub: 'Up to 65 lbs each',
                 },
                 {
                   icon: (
-                    <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364-6.364l-.707.707M6.343 17.657l-.707.707M17.657 17.657l-.707-.707M6.343 6.343l-.707-.707" />
+                    <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 2C12 2 5 10 5 14a7 7 0 0014 0c0-4-7-12-7-12z" />
                     </svg>
                   ),
                   label: 'Waterproof',
