@@ -1,5 +1,4 @@
 'use client'
-
 import { Package, Phone, Menu, X } from 'lucide-react'
 import { useState } from 'react'
 
@@ -10,6 +9,7 @@ export default function Header() {
     <header className="fixed w-full top-0 z-50 bg-white/95 backdrop-blur-sm border-b border-cool-200">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center py-4">
+
           {/* Logo */}
           <a href="/" className="flex items-center space-x-2 group">
             <div className="bg-orange p-2 rounded-lg transform group-hover:rotate-12 transition-transform duration-300">
@@ -34,7 +34,7 @@ export default function Header() {
             <a href="/#contact" className="text-navy-light hover:text-orange transition-colors font-medium">
               Contact
             </a>
-            <a href="tel:+15678251714" className="flex items-center space-x-2 text-orange hover:text-orange-dark transition-colors font-semibold">
+            <a href="tel:+15673200620" className="flex items-center space-x-2 text-orange hover:text-orange-dark transition-colors font-semibold">
               <Phone className="h-4 w-4" />
               <span>(567) 320-0620</span>
             </a>
@@ -67,7 +67,7 @@ export default function Header() {
             <a href="/#contact" className="block text-navy-light hover:text-orange transition-colors font-medium">
               Contact
             </a>
-            <a href="tel:+15678251714" className="flex items-center space-x-2 text-orange font-semibold">
+            <a href="tel:+15673200620" className="flex items-center space-x-2 text-orange font-semibold">
               <Phone className="h-4 w-4" />
               <span>(567) 320-0620</span>
             </a>
