@@ -67,7 +67,7 @@ export default function Header() {
             <a href="/#contact" className="block text-navy-light hover:text-orange transition-colors font-medium">
               Contact
             </a>
-            <a href="tel:+15673200620" className="flex items-center space-x-2 text-orange font-semibold">
+            <a href="tel:+15673200620" className="flex items-center space-x-2 text-orange font-semibold py-2">
               <Phone className="h-4 w-4" />
               <span>(567) 320-0620</span>
             </a>
