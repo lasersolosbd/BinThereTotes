@@ -43,13 +43,19 @@ export default function Header() {
             </a>
           </nav>
 
-          {/* Mobile Menu Button */}
-          <button
-            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="md:hidden p-2 text-navy"
-          >
-            {mobileMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
-          </button>
+          {/* Mobile: Phone + Hamburger */}
+          <div className="flex items-center space-x-3 md:hidden">
+            <a href="tel:+15673200620" className="flex items-center space-x-1 text-orange font-semibold text-sm">
+              <Phone className="h-4 w-4" />
+              <span>(567) 320-0620</span>
+            </a>
+            <button
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              className="p-2 text-navy"
+            >
+              {mobileMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+            </button>
+          </div>
         </div>
 
         {/* Mobile Menu */}
@@ -66,10 +72,6 @@ export default function Header() {
             </a>
             <a href="/#contact" className="block text-navy-light hover:text-orange transition-colors font-medium">
               Contact
-            </a>
-            <a href="tel:+15673200620" className="flex items-center space-x-2 text-orange font-semibold py-2">
-              <Phone className="h-4 w-4" />
-              <span>(567) 320-0620</span>
             </a>
             <a href="/#contact" className="btn-primary block text-center">
               Book Now
