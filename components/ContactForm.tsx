@@ -226,8 +226,8 @@ export default function ContactForm() {
     const payload = JSON.stringify({
       lead_type: 'ai_chat',
       form_type: 'chat_summary',
-      firstName: userData.firstName,
-      lastName: userData.lastName,
+      first_name: userData.firstName,
+      last_name: userData.lastName,
       email: userData.email,
       phone: userData.phone,
       transcript: buildTranscript(messages),
@@ -313,8 +313,8 @@ export default function ContactForm() {
       const payload = JSON.stringify({
         lead_type: 'ai_chat',
         form_type: 'chat_summary',
-        firstName: userData.firstName,
-        lastName: userData.lastName,
+        first_name: userData.firstName,
+        last_name: userData.lastName,
         email: userData.email,
         phone: userData.phone,
         transcript: buildTranscript(messages),
@@ -416,7 +416,16 @@ export default function ContactForm() {
     if (Object.keys(errs).length > 0) { setErrors(errs); return }
     setIsSubmitting(true); setSubmitStatus('idle')
     try {
-      const res = await submitWebhook({ lead_type: 'booking_request', form_type: 'reserve', ...shared, ...requestData })
+      const res = await submitWebhook({
+        lead_type: 'booking_request', form_type: 'reserve',
+        first_name: shared.firstName, last_name: shared.lastName,
+        email: shared.email, phone: shared.phone,
+        current_address: requestData.currentAddress, current_zip: requestData.currentZip,
+        moving_to_address: requestData.movingToAddress, moving_to_zip: requestData.movingToZip,
+        package: requestData.package,
+        drop_off_date: requestData.dropOffDate, pick_up_date: requestData.pickUpDate,
+        agree_sms: requestData.agreeSMS, agree_voice: requestData.agreeVoice,
+      })
       setSubmitStatus(res.ok ? 'success' : 'error')
     } catch { setSubmitStatus('error') }
     finally { setIsSubmitting(false) }
@@ -428,7 +437,15 @@ export default function ContactForm() {
     if (Object.keys(errs).length > 0) { setErrors(errs); return }
     setIsSubmitting(true); setSubmitStatus('idle')
     try {
-      const res = await submitWebhook({ lead_type: 'custom_quote', form_type: 'custom', ...shared, ...quoteData })
+      const res = await submitWebhook({
+        lead_type: 'custom_quote', form_type: 'custom',
+        first_name: shared.firstName, last_name: shared.lastName,
+        email: shared.email, phone: shared.phone,
+        current_address: quoteData.currentAddress, current_zip: quoteData.currentZip,
+        moving_to_address: quoteData.movingToAddress, moving_to_zip: quoteData.movingToZip,
+        questions: quoteData.questions,
+        agree_sms: quoteData.agreeSMS, agree_voice: quoteData.agreeVoice,
+      })
       setSubmitStatus(res.ok ? 'success' : 'error')
     } catch { setSubmitStatus('error') }
     finally { setIsSubmitting(false) }
@@ -445,7 +462,11 @@ export default function ContactForm() {
       setVoiceStatus('error'); return
     }
     try {
-      await submitWebhook({ lead_type: 'ai_voice', form_type: 'voice', ...shared })
+      await submitWebhook({
+        lead_type: 'ai_voice', form_type: 'voice',
+        first_name: shared.firstName, last_name: shared.lastName,
+        email: shared.email, phone: shared.phone,
+      })
       const res = await fetch('/api/retell', {
         method: 'POST', headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ ...shared, mode: 'voice' }),
@@ -466,7 +487,11 @@ export default function ContactForm() {
     setErrors({})
     setChatClosedReason(null)
     try {
-      await submitWebhook({ lead_type: 'ai_chat', form_type: 'chat', ...shared })
+      await submitWebhook({
+        lead_type: 'ai_chat', form_type: 'chat',
+        first_name: shared.firstName, last_name: shared.lastName,
+        email: shared.email, phone: shared.phone,
+      })
       const res = await fetch('/api/retell', {
         method: 'POST', headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ ...shared, mode: 'text' }),
