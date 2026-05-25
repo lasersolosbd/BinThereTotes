@@ -99,9 +99,6 @@ export async function POST(req: Request) {
     }
 
     // ── Chat message: send user message, return agent reply ──
-    // Correct endpoint: POST /create-chat-completion
-    // Body: { chat_id, content }
-    // Response: { messages: [{ role, content, ... }] }
     if (mode === 'chat_message') {
       if (!chatId || !message) {
         return NextResponse.json(
@@ -133,16 +130,45 @@ export async function POST(req: Request) {
 
       const data = await retellRes.json()
 
-      // Response shape: { messages: [{ role: 'agent', content: '...', ... }] }
       const agentMessage = data?.messages?.find((m: any) => m.role === 'agent')
       const replyText = agentMessage?.content ?? 'Sorry, I could not get a reply. Please try again.'
 
       return NextResponse.json({ reply: { content: replyText } })
     }
 
+    // ── End chat: terminate an active Retell chat session ──
+    if (mode === 'end_chat') {
+      if (!chatId) {
+        return NextResponse.json(
+          { error: 'chatId is required for end_chat mode.' },
+          { status: 400 }
+        )
+      }
+
+      const retellRes = await fetch('https://api.retellai.com/end-chat', {
+        method: 'PATCH',
+        headers: {
+          'Authorization': `Bearer ${RETELL_API_KEY}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ chat_id: chatId }),
+      })
+
+      if (!retellRes.ok) {
+        const errText = await retellRes.text()
+        console.error('[retell/end_chat] Retell API error:', retellRes.status, errText)
+        return NextResponse.json(
+          { error: `Retell end chat error: ${retellRes.status}` },
+          { status: retellRes.status }
+        )
+      }
+
+      return NextResponse.json({ success: true })
+    }
+
     // ── Unknown mode ──
     return NextResponse.json(
-      { error: `Unknown mode: "${mode}". Expected "voice", "text", or "chat_message".` },
+      { error: `Unknown mode: "${mode}". Expected "voice", "text", "chat_message", or "end_chat".` },
       { status: 400 }
     )
 
