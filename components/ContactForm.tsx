@@ -252,14 +252,35 @@ export default function ContactForm() {
     setShowIdleWarning(false)
   }, [])
 
+  // ── Tell Retell to close the session server-side ──
+  const endRetellChatSession = useCallback(async (id: string) => {
+    try {
+      await fetch('/api/retell', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ mode: 'end_chat', chatId: id }),
+      })
+    } catch {
+      // best effort — don't block UI shutdown
+    }
+  }, [])
+
   // ── Clean shutdown (manual or idle stage 3) ──
   const endChatSession = useCallback(async (reason: 'manual' | 'idle') => {
     stopIdleTimer()
+    const activeChatId = chatIdRef.current
     const messages = chatMessagesRef.current
     const userData = sharedRef.current
+
+    // Tell Retell to close the session so chat_analyzed fires promptly
+    if (activeChatId) {
+      await endRetellChatSession(activeChatId)
+    }
+
     if (messages.length > 0) {
       try { await sendChatSummaryWebhook(userData, messages) } catch { /* best effort */ }
     }
+
     setChatId(null)
     setChatMessages([])
     setChatInput('')
@@ -270,7 +291,7 @@ export default function ContactForm() {
         ? 'Chat closed due to inactivity. Start a new chat anytime.'
         : 'Chat ended. Thanks for chatting with us!'
     )
-  }, [stopIdleTimer, sendChatSummaryWebhook])
+  }, [stopIdleTimer, endRetellChatSession, sendChatSummaryWebhook])
 
   // ── Reset idle counter (called on every sent/received message) ──
   const resetIdleTimer = useCallback(() => {
@@ -310,6 +331,13 @@ export default function ContactForm() {
       const activeChatId = chatIdRef.current
       if (!activeChatId || messages.length === 0) return
       const userData = sharedRef.current
+
+      // Best-effort Retell session close via beacon
+      const endPayload = JSON.stringify({ mode: 'end_chat', chatId: activeChatId })
+      if (navigator.sendBeacon) {
+        navigator.sendBeacon('/api/retell', new Blob([endPayload], { type: 'application/json' }))
+      }
+
       const payload = JSON.stringify({
         lead_type: 'ai_chat',
         form_type: 'chat_summary',
@@ -522,7 +550,7 @@ export default function ContactForm() {
       if (!res.ok) throw new Error('Reply failed')
       const reply = data.reply?.content || 'Sorry, something went wrong. Please try again.'
       setChatMessages(p => [...p, { role: 'agent', content: reply }])
-      resetIdleTimer() // also reset on agent reply
+      resetIdleTimer()
     } catch {
       setChatMessages(p => [...p, { role: 'agent', content: 'Sorry, something went wrong. Please try again.' }])
     } finally {
