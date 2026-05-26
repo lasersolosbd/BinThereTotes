@@ -14,13 +14,14 @@ A modern, high-converting landing page for Bin There Totes, a veteran-owned reus
 - ✅ SEO-optimized FAQ section
 - ✅ Dynamic legal pages (Privacy & Terms)
 - ✅ Veteran-owned trust badges
-- ✅ Ready for GoHighLevel webhook integration
+- ✅ GoHighLevel webhook integration (fully configured)
+- ✅ Retell AI voice and chat agents (fully configured)
 
 ## Getting Started
 
 ### Prerequisites
 
-- Node.js 18+ 
+- Node.js 18+
 - npm or yarn
 
 ### Installation
@@ -55,11 +56,19 @@ yarn start
 
 ### GoHighLevel Webhook Integration
 
-To connect the contact form to GoHighLevel:
+The contact form is fully connected to GoHighLevel. The webhook URL is configured in `components/ContactForm.tsx`. All form submissions, AI voice calls, and AI chat sessions route to GHL automatically.
 
-1. Open `components/ContactForm.tsx`
-2. Replace `YOUR_GHL_WEBHOOK_URL_HERE` on line 33 with your actual GoHighLevel webhook URL
-3. The form will automatically send booking requests to GHL
+### Retell AI Integration
+
+The site uses three Retell AI agents:
+
+- **Jessica - Web Voice** — handles voice calls initiated from the website form
+- **Jessica - Phone Voice** — handles inbound calls to (567) 587-1549
+- **Jessica - Chat** — handles chat sessions initiated from the website form
+
+All agent configuration, prompts, and GHL workflow mappings are documented in the project reference doc in the root of this repo.
+
+The Retell API is accessed via `/api/retell/route.ts`. Supported modes: `voice`, `text`, `chat_message`, `end_chat`.
 
 ### Customizing for Other Locations
 
@@ -81,20 +90,23 @@ The color scheme is defined in `tailwind.config.js`:
 ```
 bin-there-totes/
 ├── app/
-│   ├── layout.tsx          # Root layout with metadata
-│   ├── page.tsx            # Homepage
-│   ├── privacy/page.tsx    # Privacy Policy
-│   ├── terms/page.tsx      # Terms of Service
-│   └── globals.css         # Global styles
+│   ├── api/
+│   │   └── retell/
+│   │       └── route.ts        # Retell AI API handler (voice, chat, end_chat)
+│   ├── layout.tsx              # Root layout with metadata
+│   ├── page.tsx                # Homepage
+│   ├── privacy/page.tsx        # Privacy Policy
+│   ├── terms/page.tsx          # Terms of Service
+│   └── globals.css             # Global styles
 ├── components/
-│   ├── Header.tsx          # Navigation header
-│   ├── Hero.tsx            # Hero section
-│   ├── PackageSelector.tsx # Interactive package picker
-│   ├── Features.tsx        # Feature pillars
-│   ├── FAQ.tsx             # FAQ accordion
-│   ├── ContactForm.tsx     # A2P-compliant booking form
-│   └── Footer.tsx          # Site footer
-├── public/                 # Static assets
+│   ├── Header.tsx              # Navigation header
+│   ├── Hero.tsx                # Hero section
+│   ├── PackageSelector.tsx     # Interactive package picker
+│   ├── Features.tsx            # Feature pillars
+│   ├── FAQ.tsx                 # FAQ accordion
+│   ├── ContactForm.tsx         # A2P-compliant booking form + AI voice/chat
+│   └── Footer.tsx              # Site footer
+├── public/                     # Static assets (favicons, images)
 └── package.json
 ```
 
@@ -104,12 +116,11 @@ bin-there-totes/
 - "Bin There, Done That" Guarantee messaging
 - Veteran-owned badge
 - CTA buttons
-- Hero image from Unsplash
 
 ### Package Selector
-- Standard packages (1-Bedroom, 2-Bedroom, 3-Bedroom)
+- Standard packages (Studio/1-Bed, 2-Bedroom, 3-Bedroom, 4-5 Bedroom)
 - Custom package builder with bin counter
-- Real-time pricing calculator
+- Real-time pricing display
 
 ### Features
 - Veteran-Owned Precision pillar
@@ -122,11 +133,13 @@ bin-there-totes/
 - Targets "Where can I rent moving boxes in Lima, OH?" and similar queries
 
 ### Contact Form
-- A2P SMS compliance with two checkboxes:
-  1. Terms & Privacy agreement (Required)
-  2. SMS consent (Optional)
-- GoHighLevel webhook integration ready
-- Success/error state handling
+Four tabs:
+1. **Reserve Bins Now** — standard booking request with dates and package selection
+2. **Custom Bin Order** — custom quote request with free-text details
+3. **Talk to AI** — live voice call with Jessica AI agent via Retell
+4. **Chat with AI** — live text chat with Jessica AI agent via Retell
+
+All tabs include A2P SMS compliance checkboxes and send data to GoHighLevel via webhook.
 
 ### Legal Pages
 - Privacy Policy with dynamic date
@@ -138,9 +151,8 @@ bin-there-totes/
 
 ### Vercel (Recommended)
 
-1. Push your code to GitHub
-2. Import project in Vercel
-3. Deploy with default settings
+1. Push code to GitHub (branch: main)
+2. Vercel auto-deploys on every push to main
 
 ### Other Platforms
 
@@ -157,5 +169,5 @@ This is a standard Next.js app and can be deployed to:
 ## Support
 
 For questions or support, contact:
-- Phone: (419) 555-1234
+- Phone: (567) 320-0620
 - Email: info@bintheretotes.com
