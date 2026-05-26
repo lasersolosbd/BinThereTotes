@@ -527,10 +527,7 @@ export default function ContactForm() {
       const data = await res.json()
       if (!res.ok || !data.chatId) throw new Error('Chat session error')
       setChatId(data.chatId)
-      setChatMessages([{
-        role: 'agent',
-        content: `Hey ${shared.firstName}! I'm the Bin There Totes AI assistant. I can help you figure out the right bin package, walk through pricing, or answer questions about your move. What would you like to know?`,
-      }])
+      setChatMessages([])
     } catch (err: any) { console.error('Chat failed:', err) }
   }
 
